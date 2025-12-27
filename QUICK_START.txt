@@ -1,0 +1,43 @@
+╔════════════════════════════════════════════════════════╗
+║       FROMNL SHOP - QUICK START FÜR cPANEL            ║
+╚════════════════════════════════════════════════════════╝
+
+1️⃣  DATENBANK IN cPANEL ERSTELLEN:
+   - cPanel → MySQL Databases
+   - Neue DB: fromnl_db
+   - Neuer User: fromnl_user (sicheres Passwort)
+   - User → DB (alle Privilegien)
+
+2️⃣  DATEIEN HOCHLADEN:
+   - Alle Dateien zu /public_html/fromnl hochladen (SFTP/File Manager)
+
+3️⃣  DATENBANK INITIALISIEREN:
+   - cPanel → phpMyAdmin
+   - fromnl_db auswählen
+   - SQL Tab → Inhalt von scripts/database-schema.sql einfügen
+   - Ausführen
+
+4️⃣  ENVIRONMENT KONFIGURIEREN:
+   - .env.local Datei bearbeiten:
+     DB_HOST=localhost
+     DB_USER=fromnl_user
+     DB_PASSWORD=DEIN_PASSWORT
+     DB_NAME=fromnl_db
+     ADMIN_PASSWORD=DEIN_PASSWORT
+
+5️⃣  TERMINAL COMMANDS:
+   cd /public_html/fromnl
+   npm install
+   npm run build
+   npm start
+
+6️⃣  TESTEN:
+   - https://fromnl.pro → Shop sollte laden
+   - https://fromnl.pro/admin → Admin Panel (Passwort eingeben)
+
+═════════════════════════════════════════════════════════
+
+PROBLEME?
+- Port 3000: lsof -i :3000 && kill -9 PID
+- DB Fehler: phpMyAdmin prüfen, Tabellen sichtbar?
+- Uploads: mkdir -p public/uploads && chmod 755 public/uploads

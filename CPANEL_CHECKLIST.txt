@@ -1,0 +1,42 @@
+═══════════════════════════════════════════════════════
+  FROMNL SHOP - cPanel DEPLOYMENT CHECKLIST
+═══════════════════════════════════════════════════════
+
+PRE-DEPLOYMENT:
+☐ Alle Dateien vom v0 Projekt heruntergeladen
+☐ SSH/cPanel Zugang funktioniert
+☐ Domain registriert und auf cPanel zeigend
+
+DATABASE SETUP:
+☐ MySQL Datenbank "fromnl_db" erstellt
+☐ MySQL Benutzer "fromnl_user" mit Passwort erstellt
+☐ Benutzer zur Datenbank hinzugefügt (alle Privilegien)
+☐ phpMyAdmin öffnet die fromnl_db
+☐ SQL Schema aus database-schema.sql ausgeführt
+☐ Alle Tabellen sichtbar in phpMyAdmin
+
+FILES UPLOAD:
+☐ Alle Dateien zu /public_html/fromnl hochgeladen
+☐ .env.local editiert mit DB Zugangsdaten
+☐ .env.local gespeichert
+
+INSTALLATION:
+☐ npm install erfolgreich ausgeführt
+☐ npm run build erfolgreich ausgeführt
+☐ /public/uploads Ordner existiert
+☐ npm start startet ohne Fehler
+
+TESTING:
+☐ https://fromnl.pro erreichbar
+☐ Admin Panel unter https://fromnl.pro/admin erreichbar
+☐ Admin Password funktioniert
+☐ Produkt-Upload funktioniert
+☐ Foto-Upload funktioniert
+☐ Daten werden in Datenbank gespeichert
+
+OPTIONAL:
+☐ PM2 für permanenten Server Setup
+☐ SSL Zertifikat aktiv (Let's Encrypt)
+☐ Telegram Bot Token konfiguriert
+
+═══════════════════════════════════════════════════════

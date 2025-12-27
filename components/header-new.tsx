@@ -72,7 +72,16 @@ const HeaderNew = ({ cartCount = 0, onCartClick }: HeaderProps) => {
       loadPopupContents()
     }
     window.addEventListener("storage", handleStorageChange)
-    return () => window.removeEventListener("storage", handleStorageChange)
+
+    const handleSettingsUpdate = () => {
+      loadSiteSettings()
+    }
+    window.addEventListener("site-settings-updated", handleSettingsUpdate)
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange)
+      window.removeEventListener("site-settings-updated", handleSettingsUpdate)
+    }
   }, [])
 
   const loadNavLinks = () => {

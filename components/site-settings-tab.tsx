@@ -44,6 +44,12 @@ const SiteSettingsTab = () => {
   useEffect(() => {
     loadSettings()
     loadSections()
+
+    const handleSettingsChange = () => {
+      loadSettings()
+    }
+    window.addEventListener("site-settings-updated", handleSettingsChange)
+    return () => window.removeEventListener("site-settings-updated", handleSettingsChange)
   }, [])
 
   const loadSettings = () => {
@@ -63,7 +69,7 @@ const SiteSettingsTab = () => {
   const saveSettings = (newSettings: SiteSettings) => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(newSettings))
     setSettings(newSettings)
-    window.dispatchEvent(new Event("storage"))
+    window.dispatchEvent(new Event("site-settings-updated"))
   }
 
   const saveSections = (newSections: SectionSettings) => {
@@ -119,7 +125,7 @@ const SiteSettingsTab = () => {
 
   return (
     <div className="space-y-6">
-      <h2 className="font-display text-xl text-foreground">Site Settings</h2>
+      <h2 className="font-display text-xl text-foreground">{settings.site_name}</h2>
 
       {/* Section Visibility Toggles */}
       <Card className="glass-card border-border/50">

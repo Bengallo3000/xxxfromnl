@@ -23,6 +23,15 @@ interface NavLink {
   sort_order: number
 }
 
+interface CustomPage {
+  id: string
+  title: string
+  slug: string
+  content: string
+  is_visible: boolean
+  sort_order: number
+}
+
 interface PopupContent {
   [slug: string]: {
     title: string
@@ -37,6 +46,7 @@ interface SiteSettings {
 }
 
 const NAV_LINKS_KEY = "nav_links"
+const CUSTOM_PAGES_KEY = "custom_pages"
 const SITE_SETTINGS_KEY = "site_settings"
 
 const getDefaultNavLinks = (): NavLink[] => [
@@ -56,6 +66,7 @@ const getDefaultNavLinks = (): NavLink[] => [
 const HeaderNew = ({ cartCount = 0, onCartClick }: HeaderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [navLinks, setNavLinks] = useState<NavLink[]>([])
+  const [customPages, setCustomPages] = useState<CustomPage[]>([])
   const [logoUrl, setLogoUrl] = useState<string | null>(null)
   const [popupContents, setPopupContents] = useState<PopupContent>({})
   const [activePopup, setActivePopup] = useState<string | null>(null)
@@ -63,11 +74,13 @@ const HeaderNew = ({ cartCount = 0, onCartClick }: HeaderProps) => {
 
   useEffect(() => {
     loadNavLinks()
+    loadCustomPages()
     loadSiteSettings()
     loadPopupContents()
 
     const handleStorageChange = () => {
       loadNavLinks()
+      loadCustomPages()
       loadSiteSettings()
       loadPopupContents()
     }
@@ -97,6 +110,14 @@ const HeaderNew = ({ cartCount = 0, onCartClick }: HeaderProps) => {
     }
   }
 
+  const loadCustomPages = () => {
+    const saved = localStorage.getItem(CUSTOM_PAGES_KEY)
+    if (saved) {
+      const pages: CustomPage[] = JSON.parse(saved)
+      setCustomPages(pages.filter((p) => p.is_visible).sort((a, b) => a.sort_order - b.sort_order))
+    }
+  }
+
   const loadSiteSettings = () => {
     const saved = localStorage.getItem(SITE_SETTINGS_KEY)
     if (saved) {
@@ -114,7 +135,7 @@ const HeaderNew = ({ cartCount = 0, onCartClick }: HeaderProps) => {
     }
   }
 
-  const handleNavClick = (item: NavLink, isMobile = false) => {
+  const handleNavClick = (item: NavLink | CustomPage, isMobile = false) => {
     const popupData = popupContents[item.slug]
     if (popupData && popupData.content) {
       setActivePopup(item.slug)
@@ -124,7 +145,7 @@ const HeaderNew = ({ cartCount = 0, onCartClick }: HeaderProps) => {
     if (isMobile) setIsMenuOpen(false)
   }
 
-  const renderNavItem = (item: NavLink, isMobile = false) => {
+  const renderNavItem = (item: NavLink | CustomPage, isMobile = false) => {
     const url = item.url || `/${item.slug}`
     const isAnchor = url.startsWith("#")
     const isExternal = item.is_external || url.startsWith("http")
@@ -182,6 +203,8 @@ const HeaderNew = ({ cartCount = 0, onCartClick }: HeaderProps) => {
     )
   }
 
+  const allNavItems = [...navLinks, ...customPages]
+
   const currentPopup = activePopup ? popupContents[activePopup] : null
 
   return (
@@ -207,7 +230,7 @@ const HeaderNew = ({ cartCount = 0, onCartClick }: HeaderProps) => {
             </Link>
 
             <nav className={`hidden md:flex items-center gap-1 ${isRTL ? "flex-row-reverse" : ""}`}>
-              {navLinks.map((item) => renderNavItem(item))}
+              {allNavItems.map((item) => renderNavItem(item))}
             </nav>
 
             <div className={`flex items-center gap-2 ${isRTL ? "flex-row-reverse" : ""}`}>
@@ -252,7 +275,7 @@ const HeaderNew = ({ cartCount = 0, onCartClick }: HeaderProps) => {
           {isMenuOpen && (
             <div className="md:hidden py-4 border-t border-dutch-orange/20 animate-fade-in">
               <nav className="flex flex-col gap-1">
-                {navLinks.map((item) => renderNavItem(item, true))}
+                {allNavItems.map((item) => renderNavItem(item, true))}
                 <Link to="/admin" onClick={() => setIsMenuOpen(false)}>
                   <Button
                     variant="outline"

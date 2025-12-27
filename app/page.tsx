@@ -15,16 +15,17 @@ export default function HomePage() {
 
         <div className="container mx-auto px-4 relative z-10 text-center">
           <div className="inline-block mb-6 px-4 py-2 bg-primary/10 border border-primary/30 rounded-full">
-            <p className="text-sm font-medium text-primary">Premium Dutch Quality</p>
+            <p className="text-sm font-medium text-primary">From Utrecht to the World</p>
           </div>
           <h1 className="text-5xl md:text-7xl font-bold mb-6 text-balance">
-            Best Dutch Premium Quality
+            Best Quality Dutch Production
             <span className="block mt-2 bg-gradient-to-r from-dutch-orange via-dutch-red to-dutch-blue bg-clip-text text-transparent">
-              Direct from Netherlands
+              Premium Products from Utrecht
             </span>
           </h1>
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto text-pretty">
-            Your trusted source for premium products. Discrete shipping worldwide. Best prices guaranteed.
+            Experience the finest Dutch craftsmanship. Premium quality production from the heart of the Netherlands,
+            delivered discreetly worldwide.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild size="lg" className="bg-dutch-orange hover:bg-dutch-orange/90 text-white">

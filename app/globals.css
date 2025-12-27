@@ -153,3 +153,135 @@
 .text-glow-blue {
   text-shadow: 0 0 20px rgba(0, 102, 204, 0.5);
 }
+
+/* Adding terminal scanlines effect for cyberpunk aesthetic */
+.scanlines {
+  position: relative;
+  overflow: hidden;
+}
+
+.scanlines::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.5) 50%);
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 2;
+  animation: scanlines 8s linear infinite;
+}
+
+@keyframes scanlines {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 100%;
+  }
+}
+
+/* Adding more cyberpunk effects for the new components */
+.cyber-grid {
+  background-image: linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.neon-glow {
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.8);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-scale-in {
+  animation: scale-in 0.3s ease-out;
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 0.3s ease-out;
+}
+
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.data-panel {
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(20px);
+}
+
+.btn-cyber {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-cyber::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.btn-cyber:hover::before {
+  left: 100%;
+}
+
+.text-glow-accent {
+  text-shadow: 0 0 20px rgba(255, 102, 0, 0.8), 0 0 40px rgba(255, 102, 0, 0.4);
+}

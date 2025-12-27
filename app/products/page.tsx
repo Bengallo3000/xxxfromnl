@@ -4,45 +4,51 @@ import { Button } from "@/components/ui/button"
 const products = [
   {
     id: 1,
-    name: "Premium Dutch Product A",
-    price: "€49.99",
+    name: "Utrecht Premium Selection",
+    price: "€149.99",
     image: "/premium-product-package.jpg",
     category: "Premium",
+    description: "Best quality Dutch production from Utrecht to the world",
   },
   {
     id: 2,
-    name: "Premium Dutch Product B",
-    price: "€79.99",
+    name: "Dutch Artisan Collection",
+    price: "€179.99",
     image: "/luxury-product-box.jpg",
     category: "Premium",
+    description: "Handcrafted excellence from the heart of the Netherlands",
   },
   {
     id: 3,
-    name: "Premium Dutch Product C",
-    price: "€99.99",
+    name: "Heritage Quality Pack",
+    price: "€199.99",
     image: "/premium-product-packaging.png",
     category: "Premium",
+    description: "Traditional Dutch craftsmanship meets modern standards",
   },
   {
     id: 4,
-    name: "Premium Dutch Product D",
-    price: "€59.99",
+    name: "Utrecht Signature Series",
+    price: "€159.99",
     image: "/premium-quality-product.jpg",
-    category: "Standard",
+    category: "Premium",
+    description: "Finest selection sourced directly from Utrecht producers",
   },
   {
     id: 5,
-    name: "Premium Dutch Product E",
-    price: "€89.99",
+    name: "Dutch Master Quality",
+    price: "€189.99",
     image: "/high-quality-product.jpg",
     category: "Premium",
+    description: "Superior Dutch production quality recognized worldwide",
   },
   {
     id: 6,
-    name: "Premium Dutch Product F",
-    price: "€69.99",
+    name: "Netherlands Elite Range",
+    price: "€169.99",
     image: "/premium-item-box.jpg",
-    category: "Standard",
+    category: "Premium",
+    description: "Premium Dutch goods exported from Utrecht to every corner of the globe",
   },
 ]
 
@@ -51,9 +57,10 @@ export default function ProductsPage() {
     <div className="min-h-screen py-20">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Our Products</h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Premium Dutch quality products, carefully selected for you
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Our Premium Products</h1>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto text-pretty">
+            Best quality Dutch production from Utrecht to the world. Each product represents the finest craftsmanship
+            and excellence the Netherlands has to offer.
           </p>
         </div>
 
@@ -77,6 +84,7 @@ export default function ProductsPage() {
                   </span>
                 </div>
                 <h3 className="font-semibold text-lg mb-2">{product.name}</h3>
+                <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{product.description}</p>
                 <div className="flex items-center justify-between">
                   <span className="text-2xl font-bold text-dutch-orange">{product.price}</span>
                   <Button size="sm" className="bg-dutch-orange hover:bg-dutch-orange/90 text-white">

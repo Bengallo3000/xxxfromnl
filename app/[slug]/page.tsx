@@ -4,30 +4,36 @@ import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
 import Banner from "@/components/banner"
 
-interface CustomPage {
+interface NavLink {
   id: string
   title: string
   slug: string
-  content: string
+  url: string | null
+  is_external: boolean
   is_visible: boolean
   sort_order: number
+  is_page?: boolean
+  content?: string
 }
 
 export default function DynamicPage() {
   const params = useParams()
   const router = useRouter()
-  const [page, setPage] = useState<CustomPage | null>(null)
+  const [page, setPage] = useState<NavLink | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const loadPage = () => {
-      const saved = localStorage.getItem("custom_pages")
+      console.log("[v0] Loading page with slug:", params.slug)
+      const saved = localStorage.getItem("nav_links")
       if (saved) {
-        const pages: CustomPage[] = JSON.parse(saved)
-        const foundPage = pages.find((p) => p.slug === params.slug)
+        const links: NavLink[] = JSON.parse(saved)
+        const foundPage = links.find((l) => l.slug === params.slug && l.is_page)
+        console.log("[v0] Found page:", foundPage)
         if (foundPage) {
           setPage(foundPage)
         } else {
+          console.log("[v0] Page not found, redirecting to home")
           router.push("/")
         }
       } else {

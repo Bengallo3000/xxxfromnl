@@ -1,0 +1,24 @@
+FEHLERBEHANDLUNG: Node Version Mismatch
+
+Problem: "Die Node Version passt nicht"
+
+Lösung:
+
+1. WELCHE VERSION HAST DU?
+   - Im Terminal/SSH: node --version
+   - Im cPanel: Node.js Manager → "Version"
+
+2. WENN ES UNTER 18 IST:
+   - cPanel → Node.js Manager
+   - Upgrade auf 20.x LTS
+   - Oder installiere es neu
+
+3. WENN 18+ ABER NICHT ERKANNT:
+   - Terminal: npm install
+   - Neu starten: npm run build && npm start
+
+4. WENN IMMER NOCH FEHLER:
+   - Stelle sicher, dass der richtige Node.js Versionsmanager aktiv ist
+   - Manche cPanel benutzen "nvm" - dann: nvm use 20
+
+WICHTIG: Nach Node.js Update IMMER npm install erneut laufen lassen!

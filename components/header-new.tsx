@@ -122,15 +122,15 @@ const HeaderNew = ({ cartCount = 0, onCartClick }: HeaderProps) => {
     const hasPopup = popupContents[item.slug]?.content
 
     const className = isMobile
-      ? "text-sm text-muted-foreground hover:text-cyan-400 transition-colors py-3 px-4 hover:bg-cyan-500/5 rounded font-medium flex items-center gap-2 cursor-pointer"
-      : "relative px-4 py-2 text-sm text-foreground hover:text-cyan-400 transition-all duration-300 font-medium group flex items-center gap-1 cursor-pointer"
+      ? "text-sm text-muted-foreground hover:text-dutch-orange transition-colors py-3 px-4 hover:bg-dutch-orange/5 rounded font-medium flex items-center gap-2 cursor-pointer"
+      : "relative px-4 py-2 text-sm text-foreground hover:text-dutch-orange transition-all duration-300 font-medium group flex items-center gap-1 cursor-pointer"
 
     const content = (
       <>
         <span className="relative z-10">{item.title}</span>
         {isExternal && !hasPopup && <ExternalLink className="w-3 h-3" />}
         {!isMobile && (
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-cyan-400 group-hover:w-full transition-all duration-300 rounded-full" />
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-dutch-orange group-hover:w-full transition-all duration-300 rounded-full" />
         )}
       </>
     )
@@ -177,23 +177,23 @@ const HeaderNew = ({ cartCount = 0, onCartClick }: HeaderProps) => {
 
   return (
     <>
-      <header className="sticky top-0 z-40 border-b border-cyan-500/30 bg-background/90 backdrop-blur-xl shadow-[0_0_30px_rgba(0,200,200,0.15)]">
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-500 via-teal-400 to-cyan-500" />
+      <header className="sticky top-0 z-40 border-b border-dutch-orange/30 bg-background/90 backdrop-blur-xl shadow-[0_0_30px_rgba(255,102,0,0.15)]">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-dutch-red via-dutch-orange to-dutch-blue" />
 
         <div className="container mx-auto px-4 relative">
           <div className={`flex items-center justify-between h-16 ${isRTL ? "flex-row-reverse" : ""}`}>
             <Link to="/" className="flex items-center gap-3 group">
               <img
-                src={logoUrl || "/techversehub-logo.jpg"}
-                alt="TechVerseHub Logo"
-                className="h-10 w-auto object-contain transition-transform group-hover:scale-110 drop-shadow-[0_0_10px_rgba(0,200,200,0.5)]"
+                src={logoUrl || "/fromnl-logo.png"}
+                alt="FromNL Logo"
+                className="h-10 w-auto object-contain transition-transform group-hover:scale-110 drop-shadow-[0_0_10px_rgba(255,102,0,0.5)]"
               />
               <div className="flex flex-col">
                 <span className="font-display text-lg tracking-tight leading-none font-bold">
-                  <span className="text-cyan-400 drop-shadow-[0_0_10px_rgba(0,200,200,0.8)]">TECH</span>
-                  <span className="text-teal-300 drop-shadow-[0_0_10px_rgba(0,200,200,0.8)]">VERSE</span>
+                  <span className="text-dutch-orange drop-shadow-[0_0_10px_rgba(255,102,0,0.8)]">FROM</span>
+                  <span className="text-white">NL</span>
                 </span>
-                <span className="text-[10px] text-cyan-400/60 tracking-wide">HUB.XYZ</span>
+                <span className="text-[10px] text-dutch-orange/60 tracking-wide">.pro</span>
               </div>
             </Link>
 
@@ -207,12 +207,12 @@ const HeaderNew = ({ cartCount = 0, onCartClick }: HeaderProps) => {
               <Button
                 variant="ghost"
                 size="icon"
-                className="relative hover:bg-cyan-500/10 hover:text-cyan-400 transition-all"
+                className="relative hover:bg-dutch-orange/10 hover:text-dutch-orange transition-all"
                 onClick={onCartClick}
               >
                 <ShoppingCart className="w-5 h-5" />
                 {cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-cyan-500 text-white text-xs rounded-full flex items-center justify-center font-bold animate-pulse">
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-dutch-orange text-white text-xs rounded-full flex items-center justify-center font-bold animate-pulse">
                     {cartCount}
                   </span>
                 )}
@@ -222,7 +222,7 @@ const HeaderNew = ({ cartCount = 0, onCartClick }: HeaderProps) => {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="hidden sm:flex gap-2 border-cyan-500/30 hover:border-cyan-400 hover:bg-cyan-500/5 hover:text-cyan-400 transition-all text-xs font-medium bg-transparent"
+                  className="hidden sm:flex gap-2 border-dutch-orange/30 hover:border-dutch-orange hover:bg-dutch-orange/5 hover:text-dutch-orange transition-all text-xs font-medium bg-transparent"
                 >
                   <Zap className="w-3 h-3" />
                   {t.nav.admin}
@@ -232,23 +232,23 @@ const HeaderNew = ({ cartCount = 0, onCartClick }: HeaderProps) => {
               <Button
                 variant="ghost"
                 size="icon"
-                className="md:hidden hover:bg-cyan-500/10"
+                className="md:hidden hover:bg-dutch-orange/10"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
               >
-                {isMenuOpen ? <X className="w-5 h-5 text-cyan-400" /> : <Menu className="w-5 h-5" />}
+                {isMenuOpen ? <X className="w-5 h-5 text-dutch-orange" /> : <Menu className="w-5 h-5" />}
               </Button>
             </div>
           </div>
 
           {isMenuOpen && (
-            <div className="md:hidden py-4 border-t border-cyan-500/20 animate-fade-in">
+            <div className="md:hidden py-4 border-t border-dutch-orange/20 animate-fade-in">
               <nav className="flex flex-col gap-1">
                 {navLinks.map((item) => renderNavItem(item, true))}
                 <Link to="/admin" onClick={() => setIsMenuOpen(false)}>
                   <Button
                     variant="outline"
                     size="sm"
-                    className="w-full mt-3 gap-2 border-cyan-500/30 font-medium bg-transparent"
+                    className="w-full mt-3 gap-2 border-dutch-orange/30 font-medium bg-transparent"
                   >
                     <Zap className="w-3 h-3" />
                     {t.nav.admin}

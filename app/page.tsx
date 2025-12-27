@@ -4,7 +4,6 @@ import Link from "next/link"
 import { ShoppingBag, Shield, Truck, Globe } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import HeroSection from "@/components/hero-section"
 import MatrixRain from "@/components/matrix-rain"
 import Banner from "@/components/banner"
 
@@ -13,7 +12,57 @@ export default function HomePage() {
     <div className="relative min-h-screen bg-black">
       <MatrixRain />
 
-      <HeroSection />
+      {/* Hero Section with neon cityscape wallpaper */}
+      <section className="relative py-32 overflow-hidden">
+        <div
+          className="absolute inset-0 z-0"
+          style={{
+            backgroundImage: "url(/images/fromnlwall.jpg)",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundAttachment: "fixed",
+          }}
+        >
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+        </div>
+
+        <div className="relative z-10 container mx-auto px-4 text-center">
+          <h1 className="text-6xl md:text-7xl font-bold mb-4 drop-shadow-[0_0_30px_rgba(255,102,0,0.8)]">
+            <span className="text-dutch-orange">FROM</span>
+            <span className="text-white">NL</span>
+          </h1>
+          <p className="text-xl md:text-2xl text-muted-foreground mb-8">
+            Best Quality Dutch Premium Products. From Utrecht to the World.
+          </p>
+          <Button
+            asChild
+            size="lg"
+            className="bg-dutch-orange hover:bg-dutch-orange/90 text-white shadow-[0_0_20px_rgba(255,102,0,0.5)]"
+          >
+            <Link href="#premium">Explore Products</Link>
+          </Button>
+        </div>
+      </section>
+
+      {/* Minimalist Dutch flag cityscape section */}
+      <section className="relative py-20 overflow-hidden border-t border-dutch-orange/30">
+        <div
+          className="absolute inset-0 z-0"
+          style={{
+            backgroundImage: "url(/images/brande-20es-20als-20-fromnl.jpg)",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        >
+          <div className="absolute inset-0 bg-black/70" />
+        </div>
+
+        <div className="relative z-10 text-center py-8">
+          <h2 className="text-4xl font-bold text-white drop-shadow-[0_0_20px_rgba(255,102,0,0.5)]">
+            Premium Dutch Quality Guaranteed
+          </h2>
+        </div>
+      </section>
 
       {/* Features Section */}
       <section className="py-20 border-t border-border">

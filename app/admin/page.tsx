@@ -34,6 +34,7 @@ import SiteSettingsTab from "@/components/site-settings-tab"
 import ImageUploadTab from "@/components/image-upload-tab"
 import PopupContentsTab from "@/components/popup-contents-tab"
 import TelegramSettingsTab from "@/components/telegram-settings-tab"
+import ProductsTab from "@/components/admin/products-tab"
 import type { CryptoWallet } from "@/components/checkout-modal"
 
 type NavItem = {
@@ -352,34 +353,7 @@ export default function AdminPage() {
           {activeTab === "images" && <ImageUploadTab />}
 
           {/* Products Tab Content */}
-          {activeTab === "products" && (
-            <Card className="border-primary/20 bg-card/50 backdrop-blur-sm">
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-display text-primary">Manage Products</h2>
-                  <Button className="font-mono gap-2">
-                    <Plus className="w-4 h-4" />
-                    New Product
-                  </Button>
-                </div>
-
-                {products.length === 0 ? (
-                  <div className="text-center py-12">
-                    <Package className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-                    <p className="text-muted-foreground font-mono">No products yet. Click "New Product" to add one.</p>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {products.map((product) => (
-                      <div key={product.id} className="p-4 border border-border rounded-lg">
-                        {product.name}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </Card>
-          )}
+          {activeTab === "products" && <ProductsTab />}
 
           {/* Categories Tab Content */}
           {activeTab === "categories" && (

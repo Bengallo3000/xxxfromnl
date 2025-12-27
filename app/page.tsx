@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { ShoppingBag, Shield, Truck, Globe, Star, Trophy } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -7,7 +8,35 @@ import { Card } from "@/components/ui/card"
 import MatrixRain from "@/components/matrix-rain"
 import Banner from "@/components/banner"
 
+interface SectionSettings {
+  showFreeTools: boolean
+  showPremiumProducts: boolean
+}
+
 export default function HomePage() {
+  const [sections, setSections] = useState<SectionSettings>({
+    showFreeTools: true,
+    showPremiumProducts: true,
+  })
+
+  useEffect(() => {
+    const loadSections = () => {
+      const saved = localStorage.getItem("site_sections")
+      if (saved) {
+        setSections(JSON.parse(saved))
+      }
+    }
+
+    loadSections()
+
+    const handleSectionsUpdate = () => {
+      loadSections()
+    }
+
+    window.addEventListener("sections-updated", handleSectionsUpdate)
+    return () => window.removeEventListener("sections-updated", handleSectionsUpdate)
+  }, [])
+
   return (
     <div className="relative min-h-screen bg-black">
       <MatrixRain />
@@ -28,7 +57,7 @@ export default function HomePage() {
 
         <div className="relative z-10 container mx-auto px-4 text-center">
           <p className="text-sm text-cyan-300 mb-8 tracking-widest">Hi, Premium Dutch Quality</p>
-          <h1 className="text-8xl md:text-[200px] font-black mb-8 text-white drop-shadow-[0_0_80px_rgba(255,255,255,0.9)] tracking-tighter leading-none">
+          <h1 className="text-9xl lg:text-[280px] font-black mb-8 text-white drop-shadow-[0_0_120px_rgba(255,255,255,0.95)] drop-shadow-[0_0_60px_rgba(255,255,255,0.8)] tracking-tighter leading-none">
             fromNL
           </h1>
           <p className="text-2xl md:text-4xl text-white font-light tracking-widest mb-16 drop-shadow-[0_0_30px_rgba(0,0,0,0.7)]">
@@ -131,39 +160,41 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* FREE TOOLS & SOFTWARE Section */}
-      <section className="py-12 border-t border-slate-700">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center gap-3 mb-6">
-            <span className="text-2xl">⚙️</span>
-            <h2 className="text-2xl font-bold text-white">FREE TOOLS & SOFTWARE</h2>
+      {sections.showFreeTools && (
+        <section className="py-12 border-t border-slate-700">
+          <div className="container mx-auto px-4">
+            <div className="flex items-center gap-3 mb-6">
+              <span className="text-2xl">⚙️</span>
+              <h2 className="text-2xl font-bold text-white">FREE TOOLS & SOFTWARE</h2>
+            </div>
+            <div className="bg-slate-800 rounded p-8 text-center text-slate-400">
+              <p>No free products in this category.</p>
+            </div>
           </div>
-          <div className="bg-slate-800 rounded p-8 text-center text-slate-400">
-            <p>No free products in this category.</p>
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* PREMIUM PRODUCTS Section */}
-      <section id="premium" className="py-12 border-t border-slate-700">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center gap-3 mb-6">
-            <span className="text-2xl">👑</span>
-            <h2 className="text-2xl font-bold text-white">PREMIUM PRODUCTS</h2>
-          </div>
+      {sections.showPremiumProducts && (
+        <section id="premium" className="py-12 border-t border-slate-700">
+          <div className="container mx-auto px-4">
+            <div className="flex items-center gap-3 mb-6">
+              <span className="text-2xl">👑</span>
+              <h2 className="text-2xl font-bold text-white">PREMIUM PRODUCTS</h2>
+            </div>
 
-          <div className="bg-blue-900/30 border border-blue-700 rounded p-4 mb-8 flex items-center gap-3">
-            <span className="text-blue-400">ℹ️</span>
-            <p className="text-blue-300 text-sm">
-              Premium products can be paid with cryptocurrency. Secure transactions with Bitcoin, Ethereum and more.
-            </p>
-          </div>
+            <div className="bg-blue-900/30 border border-blue-700 rounded p-4 mb-8 flex items-center gap-3">
+              <span className="text-blue-400">ℹ️</span>
+              <p className="text-blue-300 text-sm">
+                Premium products can be paid with cryptocurrency. Secure transactions with Bitcoin, Ethereum and more.
+              </p>
+            </div>
 
-          <div className="bg-slate-800 rounded p-8 text-center text-slate-400">
-            <p>No premium products in this category.</p>
+            <div className="bg-slate-800 rounded p-8 text-center text-slate-400">
+              <p>No premium products in this category.</p>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Minimalist Dutch flag cityscape section */}
       <section className="relative py-20 overflow-hidden border-t border-dutch-orange/30">

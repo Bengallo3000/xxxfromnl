@@ -9,11 +9,11 @@ import Banner from "@/components/banner"
 
 export default function HomePage() {
   return (
-    <div className="relative min-h-screen bg-slate-900">
+    <div className="relative min-h-screen bg-black">
       <MatrixRain />
 
       {/* Hero Section with neon cityscape wallpaper */}
-      <section className="relative py-32 overflow-hidden">
+      <section className="relative min-h-screen w-full overflow-hidden flex items-center justify-center">
         <div
           className="absolute inset-0 z-0"
           style={{
@@ -23,16 +23,16 @@ export default function HomePage() {
             backgroundAttachment: "fixed",
           }}
         >
-          <div className="absolute inset-0 bg-black/50" />
+          <div className="absolute inset-0 bg-black/40" />
         </div>
 
         <div className="relative z-10 container mx-auto px-4 text-center">
-          <p className="text-sm text-slate-400 mb-4">Hi, Premium Dutch Quality</p>
-          <h1 className="text-7xl md:text-8xl font-bold mb-4 text-white drop-shadow-[0_0_30px_rgba(255,200,200,0.5)]">
-            <span className="text-blue-200">from</span>
-            <span className="text-red-300">NL</span>
+          <p className="text-sm text-cyan-300 mb-8 tracking-widest">Hi, Premium Dutch Quality</p>
+          <h1 className="text-9xl md:text-[180px] font-black mb-8 text-white drop-shadow-[0_0_50px_rgba(255,255,255,0.8)] tracking-tighter">
+            <span className="block leading-none">from</span>
+            <span className="block leading-none">NL</span>
           </h1>
-          <p className="text-xl md:text-2xl text-slate-300 mb-12">
+          <p className="text-3xl md:text-5xl text-white font-light tracking-widest mb-16 drop-shadow-[0_0_20px_rgba(0,0,0,0.5)]">
             ONLY BEST DUTCH
             <br />
             QUALITY
@@ -56,10 +56,10 @@ export default function HomePage() {
 
           {/* CTA Buttons */}
           <div className="flex justify-center gap-4 flex-wrap">
-            <Button className="bg-red-500 hover:bg-red-600 text-white px-8 py-2">▼ Explore Products</Button>
+            <Button className="bg-red-500 hover:bg-red-600 text-white px-8 py-3 text-lg">▼ Explore Products</Button>
             <Button
               variant="outline"
-              className="border-slate-400 text-slate-300 hover:bg-slate-800 px-8 py-2 bg-transparent"
+              className="border-slate-300 text-slate-300 hover:bg-slate-800/50 px-8 py-3 text-lg bg-transparent backdrop-blur"
             >
               Premium Collection
             </Button>

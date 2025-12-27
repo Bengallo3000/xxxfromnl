@@ -1,42 +1,19 @@
+"use client"
+
 import Link from "next/link"
 import { ShoppingBag, Shield, Truck, Globe } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import HeroSection from "@/components/hero-section"
+import MatrixRain from "@/components/matrix-rain"
+import Banner from "@/components/banner"
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-[url('/modern-abstract-orange-blue-gradient-background.jpg')] bg-cover bg-center bg-fixed" />
-          <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
-        </div>
+    <div className="relative min-h-screen bg-black">
+      <MatrixRain />
 
-        <div className="container mx-auto px-4 relative z-10 text-center">
-          <div className="inline-block mb-6 px-4 py-2 bg-primary/10 border border-primary/30 rounded-full">
-            <p className="text-sm font-medium text-primary">From Utrecht to the World</p>
-          </div>
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 text-balance">
-            Best Quality Dutch Production
-            <span className="block mt-2 bg-gradient-to-r from-dutch-orange via-dutch-red to-dutch-blue bg-clip-text text-transparent">
-              Premium Products from Utrecht
-            </span>
-          </h1>
-          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto text-pretty">
-            Experience the finest Dutch craftsmanship. Premium quality production from the heart of the Netherlands,
-            delivered discreetly worldwide.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild size="lg" className="bg-dutch-orange hover:bg-dutch-orange/90 text-white">
-              <Link href="/products">Browse Products</Link>
-            </Button>
-            <Button asChild size="lg" variant="outline">
-              <Link href="/about">Learn More</Link>
-            </Button>
-          </div>
-        </div>
-      </section>
+      <HeroSection />
 
       {/* Features Section */}
       <section className="py-20 border-t border-border">
@@ -89,6 +66,8 @@ export default function HomePage() {
           </Button>
         </div>
       </section>
+
+      <Banner />
     </div>
   )
 }

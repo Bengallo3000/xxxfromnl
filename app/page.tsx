@@ -23,16 +23,15 @@ export default function HomePage() {
             backgroundAttachment: "fixed",
           }}
         >
-          <div className="absolute inset-0 bg-black/40" />
+          <div className="absolute inset-0 bg-black/35" />
         </div>
 
         <div className="relative z-10 container mx-auto px-4 text-center">
           <p className="text-sm text-cyan-300 mb-8 tracking-widest">Hi, Premium Dutch Quality</p>
-          <h1 className="text-9xl md:text-[180px] font-black mb-8 text-white drop-shadow-[0_0_50px_rgba(255,255,255,0.8)] tracking-tighter">
-            <span className="block leading-none">from</span>
-            <span className="block leading-none">NL</span>
+          <h1 className="text-8xl md:text-[200px] font-black mb-8 text-white drop-shadow-[0_0_80px_rgba(255,255,255,0.9)] tracking-tighter leading-none">
+            fromNL
           </h1>
-          <p className="text-3xl md:text-5xl text-white font-light tracking-widest mb-16 drop-shadow-[0_0_20px_rgba(0,0,0,0.5)]">
+          <p className="text-2xl md:text-4xl text-white font-light tracking-widest mb-16 drop-shadow-[0_0_30px_rgba(0,0,0,0.7)]">
             ONLY BEST DUTCH
             <br />
             QUALITY

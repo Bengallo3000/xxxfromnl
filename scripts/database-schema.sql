@@ -1,0 +1,78 @@
+-- FromNL.pro MySQL Database Schema
+-- Run this script on your cPanel hosting to create all tables
+
+CREATE TABLE IF NOT EXISTS `site_settings` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `site_name` VARCHAR(255) NOT NULL DEFAULT 'FROMNL.PRO',
+  `site_description` TEXT,
+  `logo_url` VARCHAR(500),
+  `og_image_url` VARCHAR(500),
+  `telegram_id` VARCHAR(255),
+  `session_id` VARCHAR(500),
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS `navigation` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `label` VARCHAR(255) NOT NULL,
+  `path` VARCHAR(500) NOT NULL,
+  `order_index` INT DEFAULT 0,
+  `visible` BOOLEAN DEFAULT true,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS `products` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL,
+  `description` TEXT,
+  `price` DECIMAL(10, 2),
+  `category_id` INT,
+  `image_url` VARCHAR(500),
+  `visible` BOOLEAN DEFAULT true,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS `categories` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL UNIQUE,
+  `slug` VARCHAR(255) UNIQUE,
+  `visible` BOOLEAN DEFAULT true,
+  `order_index` INT DEFAULT 0,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS `pages` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `title` VARCHAR(255) NOT NULL,
+  `slug` VARCHAR(255) UNIQUE,
+  `content` LONGTEXT,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS `banners` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `title` VARCHAR(255) NOT NULL,
+  `content` TEXT,
+  `image_url` VARCHAR(500),
+  `banner_type` ENUM('promo', 'header', 'footer') DEFAULT 'promo',
+  `visible` BOOLEAN DEFAULT true,
+  `order_index` INT DEFAULT 0,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS `crypto_wallets` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `currency` VARCHAR(50) NOT NULL UNIQUE,
+  `address` VARCHAR(500),
+  `qr_url` VARCHAR(500),
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Insert default site settings
+INSERT INTO `site_settings` (site_name) VALUES ('FROMNL.PRO') ON DUPLICATE KEY UPDATE site_name='FROMNL.PRO';

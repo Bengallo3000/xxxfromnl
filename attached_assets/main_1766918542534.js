@@ -1,5 +1,15 @@
 // fromNL.Top - Main JavaScript File
 
+function escapeHtml(str) {
+    if (str == null) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
 // Global variables
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 let currentTheme = localStorage.getItem('theme') || 'light';
@@ -346,9 +356,9 @@ function loadProducts() {
         grid.innerHTML = filteredProducts.map(product => `
             <div class="product-card bg-white rounded-lg shadow-lg overflow-hidden opacity-0">
                 <div class="relative">
-                    <img src="${product.image}" alt="${product.name}" class="w-full h-48 object-cover">
+                    <img src="${escapeHtml(product.image)}" alt="${escapeHtml(product.name)}" class="w-full h-48 object-cover">
                     <div class="absolute top-4 right-4">
-                        <button onclick="addToCart('${product.id}', '${product.name}', ${product.price})" 
+                        <button onclick="addToCart('${escapeHtml(product.id)}', '${escapeHtml(product.name)}', ${Number(product.price) || 0})" 
                                 class="bg-green-600 text-white p-2 rounded-full hover:bg-green-700 transition-colors glow-effect">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5 6m0 0h9m-9 0V19a2 2 0 002 2h7a2 2 0 002-2v-4"></path>
@@ -359,17 +369,17 @@ function loadProducts() {
                 </div>
                 <div class="p-6">
                     <div class="flex justify-between items-start mb-2">
-                        <h3 class="text-lg font-semibold">${product.name}</h3>
-                        <span class="text-sm text-gray-500">${product.strain || 'Hybrid'}</span>
+                        <h3 class="text-lg font-semibold">${escapeHtml(product.name)}</h3>
+                        <span class="text-sm text-gray-500">${escapeHtml(product.strain || 'Hybrid')}</span>
                     </div>
-                    <p class="text-gray-600 text-sm mb-2">${product.description.substring(0, 100)}...</p>
+                    <p class="text-gray-600 text-sm mb-2">${escapeHtml(product.description.substring(0, 100))}...</p>
                     <div class="flex justify-between items-center mb-3">
-                        <span class="text-sm text-gray-500">Potency: ${product.potency}%</span>
+                        <span class="text-sm text-gray-500">Potency: ${Number(product.potency) || 0}%</span>
                         <span class="text-sm font-medium ${product.stock > 0 ? 'text-green-600' : 'text-red-600'}">${product.stock > 0 ? 'In Stock' : 'Out of Stock'}</span>
                     </div>
                     <div class="flex justify-between items-center">
-                        <span class="text-2xl font-bold text-green-600">€${product.price}</span>
-                        <button onclick="addToCart('${product.id}', '${product.name}', ${product.price})" 
+                        <span class="text-2xl font-bold text-green-600">€${Number(product.price) || 0}</span>
+                        <button onclick="addToCart('${escapeHtml(product.id)}', '${escapeHtml(product.name)}', ${Number(product.price) || 0})" 
                                 class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors glow-effect">
                             Add to Cart
                         </button>
@@ -385,31 +395,31 @@ function loadProducts() {
             <tr class="hover:bg-gray-50">
                 <td class="px-6 py-4">
                     <div class="flex items-center">
-                        <img src="${product.image}" alt="${product.name}" class="w-10 h-10 rounded-lg object-cover mr-3">
+                        <img src="${escapeHtml(product.image)}" alt="${escapeHtml(product.name)}" class="w-10 h-10 rounded-lg object-cover mr-3">
                         <div>
-                            <div class="text-sm font-medium text-gray-900">${product.name}</div>
-                            <div class="text-sm text-gray-500">${product.description.substring(0, 50)}...</div>
+                            <div class="text-sm font-medium text-gray-900">${escapeHtml(product.name)}</div>
+                            <div class="text-sm text-gray-500">${escapeHtml(product.description.substring(0, 50))}...</div>
                         </div>
                     </div>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">€${product.price}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">€${Number(product.price) || 0}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        ${product.category}
+                        ${escapeHtml(product.category)}
                     </span>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${product.stock}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${product.potency}%</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${Number(product.stock) || 0}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${Number(product.potency) || 0}%</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(product.status)}">
-                        ${product.status}
+                        ${escapeHtml(product.status)}
                     </span>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button onclick="editProduct('${product.id}')" class="text-green-600 hover:text-green-900 mr-4">
+                    <button onclick="editProduct('${escapeHtml(product.id)}')" class="text-green-600 hover:text-green-900 mr-4">
                         Edit
                     </button>
-                    <button onclick="showDeleteModal('${product.id}')" class="text-red-600 hover:text-red-900">
+                    <button onclick="showDeleteModal('${escapeHtml(product.id)}')" class="text-red-600 hover:text-red-900">
                         Delete
                     </button>
                 </td>

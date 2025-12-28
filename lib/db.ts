@@ -145,6 +145,24 @@ export async function initDb() {
       INSERT INTO shop_themes (name, is_active, primary_color, secondary_color, accent_color, background_color, text_color, header_style, font_family)
       SELECT 'Sunset Orange', false, '#FF5722', '#E64A19', '#FFAB91', '#1F1410', '#FBE9E7', 'bold', 'Montserrat'
       WHERE NOT EXISTS (SELECT 1 FROM shop_themes WHERE name = 'Sunset Orange');
+
+      CREATE TABLE IF NOT EXISTS popups (
+        id SERIAL PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        content TEXT,
+        image_url TEXT,
+        button_text VARCHAR(100),
+        button_url TEXT,
+        popup_type VARCHAR(50) DEFAULT 'banner',
+        position VARCHAR(50) DEFAULT 'top',
+        bg_color VARCHAR(20) DEFAULT '#D64545',
+        text_color VARCHAR(20) DEFAULT '#ffffff',
+        is_active BOOLEAN DEFAULT true,
+        show_on_pages VARCHAR(255) DEFAULT 'all',
+        start_date TIMESTAMP,
+        end_date TIMESTAMP,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
     `);
   } finally {
     client.release();

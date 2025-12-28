@@ -54,6 +54,7 @@ Access at `/admin` with password: `demo123`
 - **Categories**: Create/delete categories (shown in shop filter)
 - **Pages**: Create custom pages with content
 - **Banners**: Add banners to header/footer for backlinks (various sizes)
+- **Popups**: Create promotional popups (Black Friday, sales) - banner, modal, floating, slide types
 - **Header/Footer**: Customize colors, logo, footer text, copyright
 - **Support**: Configure messenger session ID for support button
 - **Crypto**: Add crypto wallet addresses for checkout payments
@@ -73,6 +74,9 @@ pnpm dev  # Starts on port 5000
 ```
 
 ## Recent Changes
+- 2025-12-28: Added Popups management for promotional banners (Black Friday, sales, etc.)
+- 2025-12-28: Enhanced Matrix rain effect - stronger and more visible
+- 2025-12-28: Added ThePlug.u member badge to header and footer
 - 2025-12-28: Added Matrix rain effect as subtle shop background
 - 2025-12-28: Added Captcha entry page (/enter) with Matrix effect for age verification
 - 2025-12-28: Added Free Products feature with toggle in Settings and separate display section

@@ -10,7 +10,8 @@ import {
   Megaphone, Layout, HeadphonesIcon, Bitcoin, BarChart3, Bot, 
   Cog, Sparkles, MessageSquare, Eye, Pencil, Trash2, GripVertical,
   Key, LogOut, Terminal, Plus, Upload, X, Loader2, Link, Wallet,
-  ShoppingCart, CreditCard, Palette, Send, Check, Clock, Truck, XCircle
+  ShoppingCart, CreditCard, Palette, Send, Check, Clock, Truck, XCircle,
+  Bell
 } from "lucide-react"
 
 const adminTabs = [
@@ -21,6 +22,7 @@ const adminTabs = [
   { id: "categories", name: "Categories", icon: Tag },
   { id: "pages", name: "Pages", icon: FileText },
   { id: "banners", name: "Banners", icon: Megaphone },
+  { id: "popups", name: "Popups", icon: Bell },
   { id: "header-footer", name: "Header/Footer", icon: Layout },
   { id: "support", name: "Support", icon: HeadphonesIcon },
   { id: "crypto", name: "Crypto", icon: Bitcoin },
@@ -40,6 +42,7 @@ interface CryptoWallet { id: number; currency: string; wallet_address: string; i
 interface Order { id: number; order_number: string; customer_email: string; customer_name: string; customer_address: string; items: any[]; total_amount: number; payment_method: string; payment_status: string; order_status: string; notes: string; created_at: string }
 interface Payment { id: number; order_id: number; order_number?: string; customer_email?: string; payment_method: string; amount: number; currency: string; transaction_id: string; status: string; crypto_address: string; notes: string; created_at: string }
 interface ShopTheme { id: number; name: string; is_active: boolean; primary_color: string; secondary_color: string; accent_color: string; background_color: string; text_color: string; header_style: string; font_family: string }
+interface Popup { id: number; title: string; content: string; image_url: string; button_text: string; button_url: string; popup_type: string; position: string; bg_color: string; text_color: string; is_active: boolean; show_on_pages: string; start_date: string; end_date: string }
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -84,6 +87,9 @@ export default function AdminPage() {
   const [orders, setOrders] = useState<Order[]>([])
   const [payments, setPayments] = useState<Payment[]>([])
   const [shopThemes, setShopThemes] = useState<ShopTheme[]>([])
+  const [popups, setPopups] = useState<Popup[]>([])
+  const [showPopupForm, setShowPopupForm] = useState(false)
+  const [popupForm, setPopupForm] = useState({ title: "", content: "", button_text: "", button_url: "", popup_type: "banner", position: "top", bg_color: "#D64545", text_color: "#ffffff" })
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -103,7 +109,7 @@ export default function AdminPage() {
   const loadData = async () => {
     try {
       const authHeaders = { 'x-admin-token': adminToken }
-      const [navRes, imgRes, prodRes, pageRes, catRes, bannerRes, settingsRes, cryptoRes, ordersRes, paymentsRes, themesRes] = await Promise.all([
+      const [navRes, imgRes, prodRes, pageRes, catRes, bannerRes, settingsRes, cryptoRes, ordersRes, paymentsRes, themesRes, popupsRes] = await Promise.all([
         fetch('/api/navigation'),
         fetch('/api/images'),
         fetch('/api/products'),
@@ -114,7 +120,8 @@ export default function AdminPage() {
         fetch('/api/crypto'),
         fetch('/api/orders', { headers: authHeaders }),
         fetch('/api/payments', { headers: authHeaders }),
-        fetch('/api/themes')
+        fetch('/api/themes'),
+        fetch('/api/popups')
       ])
       setNavItems(await navRes.json())
       setImages(await imgRes.json())
@@ -129,6 +136,8 @@ export default function AdminPage() {
       const paymentsData = await paymentsRes.json()
       setPayments(Array.isArray(paymentsData) ? paymentsData : [])
       setShopThemes(await themesRes.json())
+      const popupsData = await popupsRes.json()
+      setPopups(Array.isArray(popupsData) ? popupsData : [])
     } catch (error) {
       console.error('Load error:', error)
     }
@@ -371,6 +380,54 @@ export default function AdminPage() {
       showMessage("Banner deleted!")
     } catch (error) {
       showMessage("Error deleting banner")
+    }
+  }
+
+  const addPopup = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    try {
+      await fetch('/api/popups', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-admin-token': adminToken },
+        body: JSON.stringify(popupForm)
+      })
+      setPopupForm({ title: "", content: "", button_text: "", button_url: "", popup_type: "banner", position: "top", bg_color: "#D64545", text_color: "#ffffff" })
+      setShowPopupForm(false)
+      loadData()
+      showMessage("Popup added!")
+    } catch (error) {
+      showMessage("Error adding popup")
+    }
+    setLoading(false)
+  }
+
+  const deletePopup = async (id: number) => {
+    if (!confirm("Delete this popup?")) return
+    try {
+      await fetch('/api/popups', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json', 'x-admin-token': adminToken },
+        body: JSON.stringify({ id })
+      })
+      loadData()
+      showMessage("Popup deleted!")
+    } catch (error) {
+      showMessage("Error deleting popup")
+    }
+  }
+
+  const togglePopup = async (popup: Popup) => {
+    try {
+      await fetch('/api/popups', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'x-admin-token': adminToken },
+        body: JSON.stringify({ ...popup, is_active: !popup.is_active })
+      })
+      loadData()
+      showMessage(popup.is_active ? "Popup deactivated!" : "Popup activated!")
+    } catch (error) {
+      showMessage("Error updating popup")
     }
   }
 
@@ -904,6 +961,98 @@ export default function AdminPage() {
                       <Button variant="ghost" size="icon" className="absolute top-2 right-2 bg-background/80 hover:bg-primary/20 text-primary opacity-0 group-hover:opacity-100" onClick={() => deleteBanner(banner.id)}>
                         <Trash2 className="w-4 h-4" />
                       </Button>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
+
+          {activeTab === "popups" && (
+            <div>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold">Popups & Promotions</h2>
+                <Button className="bg-primary hover:bg-primary/90 gap-2" onClick={() => setShowPopupForm(!showPopupForm)}>
+                  {showPopupForm ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+                  {showPopupForm ? "Cancel" : "Add Popup"}
+                </Button>
+              </div>
+              <p className="text-muted-foreground mb-4">Create promotional popups like Black Friday banners, sales announcements, and special offers.</p>
+              {showPopupForm && (
+                <form onSubmit={addPopup} className="mb-6 p-4 bg-secondary/50 rounded-lg border border-border">
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Title</label>
+                      <Input value={popupForm.title} onChange={(e) => setPopupForm({...popupForm, title: e.target.value})} placeholder="e.g. BLACK FRIDAY SALE!" className="bg-input" required />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Type</label>
+                      <select value={popupForm.popup_type} onChange={(e) => setPopupForm({...popupForm, popup_type: e.target.value})} className="w-full px-3 py-2 rounded-md bg-input border border-border">
+                        <option value="banner">Top Banner</option>
+                        <option value="modal">Modal Popup</option>
+                        <option value="slide">Slide-in</option>
+                        <option value="floating">Floating Badge</option>
+                      </select>
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium mb-2">Content/Message</label>
+                      <Textarea value={popupForm.content} onChange={(e) => setPopupForm({...popupForm, content: e.target.value})} placeholder="50% OFF all products this weekend only!" className="bg-input" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Button Text (optional)</label>
+                      <Input value={popupForm.button_text} onChange={(e) => setPopupForm({...popupForm, button_text: e.target.value})} placeholder="e.g. Shop Now" className="bg-input" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Button Link (optional)</label>
+                      <Input value={popupForm.button_url} onChange={(e) => setPopupForm({...popupForm, button_url: e.target.value})} placeholder="/products" className="bg-input" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Background Color</label>
+                      <Input type="color" value={popupForm.bg_color} onChange={(e) => setPopupForm({...popupForm, bg_color: e.target.value})} className="h-10 w-24" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Text Color</label>
+                      <Input type="color" value={popupForm.text_color} onChange={(e) => setPopupForm({...popupForm, text_color: e.target.value})} className="h-10 w-24" />
+                    </div>
+                  </div>
+                  <Button type="submit" className="mt-4 bg-primary hover:bg-primary/90" disabled={loading}>
+                    {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                    Add Popup
+                  </Button>
+                </form>
+              )}
+              <div className="space-y-4">
+                {popups.length === 0 ? (
+                  <div className="text-center py-12 text-muted-foreground">No popups yet. Create promotional popups for sales and special offers.</div>
+                ) : (
+                  popups.map((popup) => (
+                    <div key={popup.id} className="relative p-4 rounded-lg border border-border" style={{ backgroundColor: popup.bg_color + '20' }}>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 rounded-lg flex items-center justify-center" style={{ backgroundColor: popup.bg_color, color: popup.text_color }}>
+                            <Bell className="w-6 h-6" />
+                          </div>
+                          <div>
+                            <div className="font-medium flex items-center gap-2">
+                              {popup.title}
+                              <span className={`text-xs px-2 py-0.5 rounded ${popup.is_active ? 'bg-green-500/20 text-green-500' : 'bg-gray-500/20 text-gray-500'}`}>
+                                {popup.is_active ? 'Active' : 'Inactive'}
+                              </span>
+                              <span className="text-xs px-2 py-0.5 rounded bg-background">{popup.popup_type}</span>
+                            </div>
+                            <div className="text-sm text-muted-foreground mt-1">{popup.content || 'No message'}</div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Button variant="ghost" size="sm" className="gap-1" onClick={() => togglePopup(popup)}>
+                            {popup.is_active ? <XCircle className="w-4 h-4" /> : <Check className="w-4 h-4" />}
+                            {popup.is_active ? 'Deactivate' : 'Activate'}
+                          </Button>
+                          <Button variant="ghost" size="icon" className="text-primary hover:bg-primary/20" onClick={() => deletePopup(popup.id)}>
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
                     </div>
                   ))
                 )}

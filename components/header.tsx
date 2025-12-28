@@ -105,14 +105,23 @@ export function Header() {
       >
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
-            <Link href="/" className="flex items-center gap-2">
-              <img
-                src={settings.logo_url || "/fromnl-logo.png"}
-                alt="FromNL Logo"
-                className="h-10 w-auto rounded"
-              />
-              <span className="text-xs text-primary">.pro</span>
-            </Link>
+            <div className="flex items-center gap-3">
+              <Link href="/" className="flex items-center gap-2">
+                <img
+                  src={settings.logo_url || "/fromnl-logo.png"}
+                  alt="FromNL Logo"
+                  className="h-10 w-auto rounded"
+                />
+                <span className="text-xs text-primary">.pro</span>
+              </Link>
+              <a href="https://theplug.u" target="_blank" rel="noopener noreferrer">
+                <img
+                  src="/theplug-badge.png"
+                  alt="ThePlug.u Member"
+                  className="h-8 w-auto opacity-80 hover:opacity-100 transition-opacity"
+                />
+              </a>
+            </div>
 
             <nav className="hidden md:flex items-center gap-6">
               {navigation.map((item) => (

@@ -7,7 +7,7 @@ interface MatrixEffectProps {
   className?: string
 }
 
-export function MatrixEffect({ opacity = 0.15, className = "" }: MatrixEffectProps) {
+export function MatrixEffect({ opacity = 0.4, className = "" }: MatrixEffectProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
@@ -24,35 +24,43 @@ export function MatrixEffect({ opacity = 0.15, className = "" }: MatrixEffectPro
     resizeCanvas()
     window.addEventListener('resize', resizeCanvas)
 
-    const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ$€£¥₿@#%&*<>[]{}|/\\~^'
     const charArray = chars.split('')
-    const fontSize = 14
+    const fontSize = 16
     const columns = Math.floor(canvas.width / fontSize)
     const drops: number[] = Array(columns).fill(1)
+    const speeds: number[] = Array(columns).fill(0).map(() => 0.5 + Math.random() * 1.5)
 
     const draw = () => {
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)'
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.03)'
       ctx.fillRect(0, 0, canvas.width, canvas.height)
-
-      ctx.fillStyle = '#00ff00'
-      ctx.font = `${fontSize}px monospace`
 
       for (let i = 0; i < drops.length; i++) {
         const char = charArray[Math.floor(Math.random() * charArray.length)]
         const x = i * fontSize
         const y = drops[i] * fontSize
 
-        ctx.fillStyle = `rgba(0, 255, 0, ${0.5 + Math.random() * 0.5})`
+        const brightness = 0.6 + Math.random() * 0.4
+        ctx.shadowBlur = 8
+        ctx.shadowColor = '#00ff00'
+        ctx.fillStyle = `rgba(0, 255, 0, ${brightness})`
+        ctx.font = `bold ${fontSize}px monospace`
         ctx.fillText(char, x, y)
 
-        if (y > canvas.height && Math.random() > 0.975) {
+        if (Math.random() > 0.98) {
+          ctx.fillStyle = '#ffffff'
+          ctx.shadowColor = '#ffffff'
+          ctx.fillText(char, x, y)
+        }
+
+        if (y > canvas.height && Math.random() > 0.95) {
           drops[i] = 0
         }
-        drops[i]++
+        drops[i] += speeds[i]
       }
     }
 
-    const interval = setInterval(draw, 33)
+    const interval = setInterval(draw, 25)
 
     return () => {
       clearInterval(interval)

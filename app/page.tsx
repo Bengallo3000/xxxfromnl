@@ -35,17 +35,9 @@ export default function HomePage() {
             <p className="text-sm text-primary">★ Premium Dutch Quality</p>
           </div>
           
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <span className="text-5xl md:text-7xl font-bold text-white tracking-tight">from</span>
-            <div className="relative">
-              <span className="text-5xl md:text-7xl font-bold bg-gradient-to-b from-[#D64545] via-white to-[#1E4C8E] bg-clip-text text-transparent">NL</span>
-              <div className="absolute -top-2 -right-6 w-6 h-6 rounded-full border-2 border-white/50 flex items-center justify-center text-xs text-white/70">®</div>
-            </div>
-          </div>
-          
-          <p className="text-xl md:text-2xl text-white/80 mb-8 tracking-widest font-light">
+          <h1 className="text-4xl md:text-6xl font-bold text-white mb-8 tracking-widest">
             ONLY BEST DUTCH QUALITY
-          </p>
+          </h1>
 
           <div className="flex flex-wrap justify-center gap-6 mb-8 text-sm text-white/70">
             <div className="flex items-center gap-2">

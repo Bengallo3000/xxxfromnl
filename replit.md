@@ -44,15 +44,17 @@ public/
 ## Admin Panel CMS
 Access at `/admin` with password: `demo123`
 
-**Functional tabs:**
-- **Navigation**: Add/delete header navigation links (persisted)
-- **Images**: Upload images to library (persisted)
-- **Products**: Create products with image upload (shown in shop)
+**All tabs are functional with persistent database storage:**
+- **Navigation**: Add/delete header navigation links
+- **Settings**: Shop name, slogan, contact email
+- **Images**: Upload images to library
+- **Products**: Create products with image upload, category selection
+- **Categories**: Create/delete categories (shown in shop filter)
 - **Pages**: Create custom pages with content
-
-**Other tabs** (UI only, not yet functional):
-- Settings, Categories, Banners, Header/Footer, Support
-- Crypto, Sales, Spam Bot, Bot Config, Special Bot, Popups
+- **Banners**: Add banners to header/footer for backlinks (various sizes)
+- **Header/Footer**: Customize colors, logo, footer text, copyright
+- **Support**: Configure messenger session ID for support button
+- **Crypto**: Add crypto wallet addresses for checkout payments
 
 ## Environment Variables
 - `NEXT_PUBLIC_ADMIN_PASSWORD`: Client-side login check (default: demo123)
@@ -65,8 +67,14 @@ pnpm dev  # Starts on port 5000
 ```
 
 ## Recent Changes
+- 2025-12-28: Enhanced hero text - larger/bolder with stronger Dutch flag colors (red/white/blue)
+- 2025-12-28: Added Categories management with shop filtering
+- 2025-12-28: Added Banners system for header/footer with various sizes for backlinks
+- 2025-12-28: Added Header/Footer customization (colors, logo, text)
+- 2025-12-28: Added Support messenger integration with floating button
+- 2025-12-28: Added Crypto wallet management for checkout payments
 - 2025-12-28: Added PostgreSQL database with CMS functionality
-- 2025-12-28: Admin panel now has working forms for navigation, images, products, pages
+- 2025-12-28: Admin panel now has working forms for all features
 - 2025-12-28: Homepage and products page now display data from database
 - 2025-12-28: Added server-side API authentication
 - 2025-12-28: Migrated from Vercel to Replit

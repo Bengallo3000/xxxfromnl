@@ -7,6 +7,8 @@ export function checkAdminAuth(request: NextRequest): boolean {
   return authHeader === ADMIN_PASSWORD;
 }
 
+export const verifyAuth = checkAdminAuth;
+
 export function unauthorizedResponse() {
   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 }

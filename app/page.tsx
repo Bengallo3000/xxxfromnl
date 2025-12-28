@@ -15,42 +15,44 @@ interface Product {
   category: string
 }
 
-const defaultCategories = [
-  { name: "Alle", active: true },
-  { name: "Development", active: false },
-  { name: "Security", active: false },
-  { name: "Utilities", active: false },
-  { name: "AI Tools", active: false },
-  { name: "Accounts", active: false },
-  { name: "Gaming", active: false },
-]
+interface Category {
+  id: number
+  name: string
+  slug: string
+}
 
 export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
   const [selectedCategory, setSelectedCategory] = useState("Alle")
 
   useEffect(() => {
-    fetchProducts()
+    fetchData()
   }, [])
 
-  const fetchProducts = async () => {
+  const fetchData = async () => {
     try {
-      const res = await fetch('/api/products')
-      const data = await res.json()
-      if (Array.isArray(data)) {
-        setProducts(data)
+      const [prodRes, catRes] = await Promise.all([
+        fetch('/api/products'),
+        fetch('/api/categories')
+      ])
+      const prodData = await prodRes.json()
+      const catData = await catRes.json()
+      if (Array.isArray(prodData)) {
+        setProducts(prodData)
+      }
+      if (Array.isArray(catData)) {
+        setCategories(catData)
       }
     } catch (error) {
-      console.log('No products loaded')
+      console.log('No data loaded')
     }
   }
 
-  const productCategories = [...new Set(products.map(p => p.category).filter(Boolean))]
-  const allCategories = [
+  const displayCategories = [
     { name: "Alle", active: selectedCategory === "Alle" },
-    ...productCategories.map(cat => ({ name: cat, active: selectedCategory === cat }))
+    ...categories.map(cat => ({ name: cat.name, active: selectedCategory === cat.name }))
   ]
-  const displayCategories = productCategories.length > 0 ? allCategories : defaultCategories
 
   const filteredProducts = selectedCategory === "Alle" 
     ? products 

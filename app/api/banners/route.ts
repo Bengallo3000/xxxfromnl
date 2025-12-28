@@ -3,7 +3,6 @@ import { query } from '@/lib/db'
 import { verifyAuth } from '@/lib/auth'
 import { writeFile, mkdir } from 'fs/promises'
 import path from 'path'
-import formidable from 'formidable'
 
 export async function GET() {
   try {
@@ -29,12 +28,12 @@ export async function POST(request: NextRequest) {
     let image_url = ''
     if (image && image.size > 0) {
       const bytes = await image.arrayBuffer()
-      const buffer = Buffer.from(bytes)
+      const uint8Array = new Uint8Array(bytes)
       const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'banners')
       await mkdir(uploadDir, { recursive: true })
       const filename = `${Date.now()}-${image.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`
       const filepath = path.join(uploadDir, filename)
-      await writeFile(filepath, buffer)
+      await writeFile(filepath, uint8Array)
       image_url = `/uploads/banners/${filename}`
     }
     
@@ -44,6 +43,7 @@ export async function POST(request: NextRequest) {
     )
     return NextResponse.json(result.rows[0])
   } catch (error) {
+    console.error('Banner upload error:', error)
     return NextResponse.json({ error: 'Failed to create banner' }, { status: 500 })
   }
 }

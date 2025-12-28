@@ -14,7 +14,8 @@ FromNL.pro is a premium e-commerce platform showcasing Dutch quality products. T
 ## Project Structure
 ```
 app/
-  page.tsx           # Homepage with hero, dynamic products
+  page.tsx           # Homepage with hero, Matrix effect, products
+  enter/page.tsx     # Captcha entry page with Matrix effect
   admin/page.tsx     # Admin CMS panel
   products/page.tsx  # Products listing from database
   layout.tsx         # Root layout with header/footer
@@ -33,6 +34,7 @@ lib/
 components/
   header.tsx         # Dynamic navigation from database
   footer.tsx         # Site footer
+  matrix-effect.tsx  # Matrix rain effect background
   ui/                # shadcn/ui components
 
 public/
@@ -71,6 +73,10 @@ pnpm dev  # Starts on port 5000
 ```
 
 ## Recent Changes
+- 2025-12-28: Added Matrix rain effect as subtle shop background
+- 2025-12-28: Added Captcha entry page (/enter) with Matrix effect for age verification
+- 2025-12-28: Added Free Products feature with toggle in Settings and separate display section
+- 2025-12-28: Products can now be marked as "Free" (GRATIS) with separate styling
 - 2025-12-28: Added Orders management with status tracking (new, confirmed, processing, shipped, delivered, cancelled)
 - 2025-12-28: Added Payments management with transaction tracking
 - 2025-12-28: Added Telegram bot integration for managing orders/products via Telegram

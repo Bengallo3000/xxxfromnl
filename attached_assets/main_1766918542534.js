@@ -583,31 +583,56 @@ function updateCartDisplay() {
             cartItems.innerHTML = '';
         } else {
             emptyCart.style.display = 'none';
-            cartItems.innerHTML = cart.map(item => `
-                <div class="flex items-center justify-between py-4 border-b">
-                    <div class="flex-1">
-                        <h4 class="font-semibold text-sm">${item.name}</h4>
-                        <p class="text-gray-600">€${item.price}</p>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <button onclick="updateQuantity('${item.id}', ${item.quantity - 1})" 
-                                class="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300 text-sm">
-                            -
-                        </button>
-                        <span class="w-8 text-center text-sm">${item.quantity}</span>
-                        <button onclick="updateQuantity('${item.id}', ${item.quantity + 1})" 
-                                class="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300 text-sm">
-                            +
-                        </button>
-                        <button onclick="removeFromCart('${item.id}')" 
-                                class="ml-2 text-red-500 hover:text-red-700">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-            `).join('');
+            cartItems.innerHTML = '';
+            cart.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'flex items-center justify-between py-4 border-b';
+
+                const infoDiv = document.createElement('div');
+                infoDiv.className = 'flex-1';
+
+                const nameEl = document.createElement('h4');
+                nameEl.className = 'font-semibold text-sm';
+                nameEl.textContent = item.name;
+
+                const priceEl = document.createElement('p');
+                priceEl.className = 'text-gray-600';
+                priceEl.textContent = '€' + item.price;
+
+                infoDiv.appendChild(nameEl);
+                infoDiv.appendChild(priceEl);
+
+                const controlsDiv = document.createElement('div');
+                controlsDiv.className = 'flex items-center space-x-2';
+
+                const minusBtn = document.createElement('button');
+                minusBtn.className = 'w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300 text-sm';
+                minusBtn.textContent = '-';
+                minusBtn.addEventListener('click', () => updateQuantity(item.id, item.quantity - 1));
+
+                const qtySpan = document.createElement('span');
+                qtySpan.className = 'w-8 text-center text-sm';
+                qtySpan.textContent = item.quantity;
+
+                const plusBtn = document.createElement('button');
+                plusBtn.className = 'w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300 text-sm';
+                plusBtn.textContent = '+';
+                plusBtn.addEventListener('click', () => updateQuantity(item.id, item.quantity + 1));
+
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'ml-2 text-red-500 hover:text-red-700';
+                removeBtn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>';
+                removeBtn.addEventListener('click', () => removeFromCart(item.id));
+
+                controlsDiv.appendChild(minusBtn);
+                controlsDiv.appendChild(qtySpan);
+                controlsDiv.appendChild(plusBtn);
+                controlsDiv.appendChild(removeBtn);
+
+                itemDiv.appendChild(infoDiv);
+                itemDiv.appendChild(controlsDiv);
+                cartItems.appendChild(itemDiv);
+            });
         }
     }
 }

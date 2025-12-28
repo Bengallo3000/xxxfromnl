@@ -21,7 +21,7 @@ export default function HomePage() {
       <section className="relative min-h-[600px] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image
-            src="/wallpaperfromnl_1766918480965.jpg"
+            src="/brande_es_als__FromNL.top__1766918480964.jpg"
             alt="FromNL Hero"
             fill
             className="object-cover"
@@ -35,9 +35,14 @@ export default function HomePage() {
             <p className="text-sm text-primary">★ Premium Dutch Quality</p>
           </div>
           
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-8 tracking-widest">
-            ONLY BEST DUTCH QUALITY
+          <h1 className="text-5xl md:text-8xl font-bold mb-4 tracking-tight">
+            <span className="text-white">from</span>
+            <span className="bg-gradient-to-b from-[#D64545] via-white to-[#1E4C8E] bg-clip-text text-transparent">NL</span>
           </h1>
+          
+          <p className="text-xl md:text-2xl text-white/80 mb-8 tracking-widest font-light">
+            ONLY BEST DUTCH QUALITY
+          </p>
 
           <div className="flex flex-wrap justify-center gap-6 mb-8 text-sm text-white/70">
             <div className="flex items-center gap-2">
@@ -125,7 +130,7 @@ export default function HomePage() {
       <section className="py-12 relative">
         <div className="absolute inset-0 z-0 opacity-30">
           <Image
-            src="/brande_es_als__FromNL.top__1766918480964.jpg"
+            src="/wallpaperfromnl_1766918480965.jpg"
             alt="Background"
             fill
             className="object-cover"

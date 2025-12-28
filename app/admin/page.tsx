@@ -238,7 +238,7 @@ export default function AdminPage() {
         headers: { 'x-admin-token': adminToken },
         body: formData
       })
-      setProductForm({ name: "", description: "", price: "", category: "" })
+      setProductForm({ name: "", description: "", price: "", category: "", is_free: false })
       setProductImage(null)
       setShowProductForm(false)
       loadData()

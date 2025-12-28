@@ -42,3 +42,6 @@ build = ["pnpm", "build"]
 
 [userenv.development]
 NEXT_PUBLIC_ADMIN_PASSWORD = "demo123"
+
+[userenv.shared]
+ADMIN_PASSWORD = "demo123"

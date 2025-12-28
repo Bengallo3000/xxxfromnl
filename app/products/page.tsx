@@ -1,92 +1,142 @@
-import { Card } from "@/components/ui/card"
+"use client"
+
+import { useState, useEffect } from "react"
+import { Package, ShoppingCart } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
-const products = [
-  {
-    id: 1,
-    name: "Premium Dutch Product A",
-    price: "€49.99",
-    image: "/premium-product-package.jpg",
-    category: "Premium",
-  },
-  {
-    id: 2,
-    name: "Premium Dutch Product B",
-    price: "€79.99",
-    image: "/luxury-product-box.jpg",
-    category: "Premium",
-  },
-  {
-    id: 3,
-    name: "Premium Dutch Product C",
-    price: "€99.99",
-    image: "/premium-product-packaging.png",
-    category: "Premium",
-  },
-  {
-    id: 4,
-    name: "Premium Dutch Product D",
-    price: "€59.99",
-    image: "/premium-quality-product.jpg",
-    category: "Standard",
-  },
-  {
-    id: 5,
-    name: "Premium Dutch Product E",
-    price: "€89.99",
-    image: "/high-quality-product.jpg",
-    category: "Premium",
-  },
-  {
-    id: 6,
-    name: "Premium Dutch Product F",
-    price: "€69.99",
-    image: "/premium-item-box.jpg",
-    category: "Standard",
-  },
-]
+interface Product {
+  id: number
+  name: string
+  description: string
+  price: number
+  image_url: string
+  category: string
+  in_stock: boolean
+}
 
 export default function ProductsPage() {
+  const [products, setProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(true)
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+
+  useEffect(() => {
+    fetchProducts()
+  }, [])
+
+  const fetchProducts = async () => {
+    try {
+      const res = await fetch('/api/products')
+      const data = await res.json()
+      if (Array.isArray(data)) {
+        setProducts(data)
+      }
+    } catch (error) {
+      console.error('Error loading products:', error)
+    }
+    setLoading(false)
+  }
+
+  const categories = [...new Set(products.map(p => p.category).filter(Boolean))]
+  const filteredProducts = selectedCategory 
+    ? products.filter(p => p.category === selectedCategory)
+    : products
+
   return (
-    <div className="min-h-screen py-20">
+    <div className="min-h-screen bg-background py-12">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Our Products</h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Premium Dutch quality products, carefully selected for you
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+            <span className="text-white">Our </span>
+            <span className="text-primary">Products</span>
+          </h1>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Discover our premium selection of Dutch quality products
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {products.map((product) => (
-            <Card
-              key={product.id}
-              className="overflow-hidden border-primary/20 bg-card/50 backdrop-blur group hover:border-dutch-orange/50 transition-all"
+        {categories.length > 0 && (
+          <div className="flex flex-wrap gap-2 justify-center mb-8">
+            <Button
+              variant={selectedCategory === null ? "default" : "outline"}
+              size="sm"
+              onClick={() => setSelectedCategory(null)}
+              className={selectedCategory === null ? "bg-primary" : ""}
             >
-              <div className="aspect-square overflow-hidden bg-muted">
-                <img
-                  src={product.image || "/placeholder.svg"}
-                  alt={product.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-              </div>
-              <div className="p-6">
-                <div className="mb-2">
-                  <span className="text-xs font-medium px-2 py-1 rounded-full bg-dutch-orange/10 text-dutch-orange">
-                    {product.category}
-                  </span>
+              All
+            </Button>
+            {categories.map((cat) => (
+              <Button
+                key={cat}
+                variant={selectedCategory === cat ? "default" : "outline"}
+                size="sm"
+                onClick={() => setSelectedCategory(cat)}
+                className={selectedCategory === cat ? "bg-primary" : ""}
+              >
+                {cat}
+              </Button>
+            ))}
+          </div>
+        )}
+
+        {loading ? (
+          <div className="text-center py-20">
+            <div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full mx-auto mb-4" />
+            <p className="text-muted-foreground">Loading products...</p>
+          </div>
+        ) : filteredProducts.length === 0 ? (
+          <div className="text-center py-20">
+            <Package className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+            <h2 className="text-xl font-medium mb-2">No products available</h2>
+            <p className="text-muted-foreground">
+              Products will appear here once they are added in the admin panel.
+            </p>
+          </div>
+        ) : (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {filteredProducts.map((product) => (
+              <div 
+                key={product.id} 
+                className="group bg-card rounded-lg border border-border overflow-hidden hover:border-primary/50 transition-colors"
+              >
+                {product.image_url ? (
+                  <div className="aspect-square overflow-hidden">
+                    <img 
+                      src={product.image_url} 
+                      alt={product.name} 
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
+                    />
+                  </div>
+                ) : (
+                  <div className="aspect-square bg-secondary flex items-center justify-center">
+                    <Package className="w-16 h-16 text-muted-foreground" />
+                  </div>
+                )}
+                <div className="p-4">
+                  {product.category && (
+                    <div className="text-xs text-primary mb-1">{product.category}</div>
+                  )}
+                  <h3 className="font-medium mb-1 group-hover:text-primary transition-colors">
+                    {product.name}
+                  </h3>
+                  {product.description && (
+                    <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
+                      {product.description}
+                    </p>
+                  )}
+                  <div className="flex items-center justify-between">
+                    <span className="text-lg font-bold text-primary">
+                      EUR {Number(product.price).toFixed(2)}
+                    </span>
+                    <Button size="sm" className="bg-primary hover:bg-primary/90 gap-1">
+                      <ShoppingCart className="w-4 h-4" />
+                      Add
+                    </Button>
+                  </div>
                 </div>
-                <h3 className="font-semibold text-lg mb-2">{product.name}</h3>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-dutch-orange">{product.price}</span>
-                  <Button size="sm" className="bg-dutch-orange hover:bg-dutch-orange/90 text-white">
-                    Add to Cart
-                  </Button>
-                </div>
               </div>
-            </Card>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )

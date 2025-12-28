@@ -1,23 +1,44 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { Menu, ShoppingCart, Globe, User } from "lucide-react"
+import { ShoppingCart, User, Menu, X, Globe } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { cn } from "@/lib/utils"
 
-const navigation = [
-  { name: "Home", href: "/" },
-  { name: "Products", href: "/products" },
-  { name: "Contact", href: "#contact" },
+interface NavItem {
+  id: number
+  label: string
+  href: string
+  sort_order: number
+}
+
+const defaultNavigation = [
+  { label: "Home", href: "/" },
+  { label: "Products", href: "/products" },
+  { label: "Contact", href: "#contact" },
 ]
 
 export function Header() {
-  const pathname = usePathname()
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [navigation, setNavigation] = useState(defaultNavigation)
 
-  if (pathname === "/admin") {
-    return null
+  useEffect(() => {
+    fetchNavigation()
+  }, [])
+
+  const fetchNavigation = async () => {
+    try {
+      const res = await fetch('/api/navigation')
+      const data = await res.json()
+      if (Array.isArray(data) && data.length > 0) {
+        setNavigation(data.map((item: NavItem) => ({
+          label: item.label,
+          href: item.href
+        })))
+      }
+    } catch (error) {
+      console.log('Using default navigation')
+    }
   }
 
   return (
@@ -38,27 +59,22 @@ export function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={cn(
-                  "text-sm font-medium transition-colors",
-                  pathname === item.href 
-                    ? "text-white" 
-                    : "text-muted-foreground hover:text-white"
-                )}
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
               >
-                {item.name}
+                {item.label}
               </Link>
             ))}
           </nav>
 
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="sm" className="hidden md:flex items-center gap-2 text-muted-foreground">
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" className="hidden md:flex items-center gap-2">
               <Globe className="w-4 h-4" />
-              <span>English</span>
+              English
             </Button>
             
             <Button variant="ghost" size="icon" className="relative">
               <ShoppingCart className="w-5 h-5" />
-              <span className="absolute -top-1 -right-1 w-4 h-4 bg-primary text-[10px] rounded-full flex items-center justify-center text-white">
+              <span className="absolute -top-1 -right-1 w-4 h-4 bg-primary text-[10px] font-bold rounded-full flex items-center justify-center">
                 0
               </span>
             </Button>
@@ -66,37 +82,37 @@ export function Header() {
             <Link href="/admin">
               <Button variant="ghost" size="sm" className="gap-2">
                 <User className="w-4 h-4" />
-                <span className="hidden md:inline">Admin</span>
+                Admin
               </Button>
             </Link>
 
-            <Sheet>
-              <SheetTrigger asChild className="md:hidden">
-                <Button variant="ghost" size="icon">
-                  <Menu className="h-5 w-5" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent className="bg-background border-border">
-                <nav className="flex flex-col gap-4 mt-8">
-                  {navigation.map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className={cn(
-                        "text-lg font-medium transition-colors",
-                        pathname === item.href 
-                          ? "text-white" 
-                          : "text-muted-foreground hover:text-white"
-                      )}
-                    >
-                      {item.name}
-                    </Link>
-                  ))}
-                </nav>
-              </SheetContent>
-            </Sheet>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="md:hidden"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </Button>
           </div>
         </div>
+
+        {isMenuOpen && (
+          <div className="md:hidden border-t border-border py-4">
+            <nav className="flex flex-col gap-2">
+              {navigation.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary rounded-md transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+        )}
       </div>
     </header>
   )

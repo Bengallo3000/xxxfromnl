@@ -1,9 +1,21 @@
+"use client"
+
 import Link from "next/link"
 import Image from "next/image"
-import { Shield, Truck, Star, Check, Tag } from "lucide-react"
+import { Shield, Truck, Star, Check, Tag, Package, ShoppingCart } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useState, useEffect } from "react"
 
-const categories = [
+interface Product {
+  id: number
+  name: string
+  description: string
+  price: number
+  image_url: string
+  category: string
+}
+
+const defaultCategories = [
   { name: "Alle", active: true },
   { name: "Development", active: false },
   { name: "Security", active: false },
@@ -14,6 +26,36 @@ const categories = [
 ]
 
 export default function HomePage() {
+  const [products, setProducts] = useState<Product[]>([])
+  const [selectedCategory, setSelectedCategory] = useState("Alle")
+
+  useEffect(() => {
+    fetchProducts()
+  }, [])
+
+  const fetchProducts = async () => {
+    try {
+      const res = await fetch('/api/products')
+      const data = await res.json()
+      if (Array.isArray(data)) {
+        setProducts(data)
+      }
+    } catch (error) {
+      console.log('No products loaded')
+    }
+  }
+
+  const productCategories = [...new Set(products.map(p => p.category).filter(Boolean))]
+  const allCategories = [
+    { name: "Alle", active: selectedCategory === "Alle" },
+    ...productCategories.map(cat => ({ name: cat, active: selectedCategory === cat }))
+  ]
+  const displayCategories = productCategories.length > 0 ? allCategories : defaultCategories
+
+  const filteredProducts = selectedCategory === "Alle" 
+    ? products 
+    : products.filter(p => p.category === selectedCategory)
+
   return (
     <div className="min-h-screen bg-background">
       <div className="absolute inset-0 scanlines opacity-20 pointer-events-none" />
@@ -111,9 +153,10 @@ export default function HomePage() {
           </div>
           
           <div className="flex flex-wrap gap-2">
-            {categories.map((cat) => (
+            {displayCategories.map((cat) => (
               <button
                 key={cat.name}
+                onClick={() => setSelectedCategory(cat.name)}
                 className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                   cat.active 
                     ? "bg-primary text-white" 
@@ -141,19 +184,6 @@ export default function HomePage() {
         <div className="container mx-auto px-4 relative z-10">
           <div className="flex items-center gap-2 mb-6">
             <div className="w-1 h-6 bg-primary rounded-full" />
-            <h2 className="text-xl font-semibold">FREE TOOLS & SOFTWARE</h2>
-          </div>
-          
-          <div className="bg-card/50 backdrop-blur rounded-lg p-12 text-center border border-border/50">
-            <p className="text-muted-foreground">No free products in this category.</p>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-12">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-1 h-6 bg-primary rounded-full" />
             <h2 className="text-xl font-semibold">PREMIUM PRODUCTS</h2>
           </div>
           
@@ -162,9 +192,58 @@ export default function HomePage() {
             <span className="text-sm">Premium products can be paid with cryptocurrency. Secure transactions with Bitcoin, Ethereum and more.</span>
           </div>
           
-          <div className="bg-card/50 backdrop-blur rounded-lg p-12 text-center border border-border/50">
-            <p className="text-muted-foreground">No premium products in this category.</p>
-          </div>
+          {filteredProducts.length === 0 ? (
+            <div className="bg-card/50 backdrop-blur rounded-lg p-12 text-center border border-border/50">
+              <Package className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground">No products in this category yet.</p>
+              <p className="text-sm text-muted-foreground mt-2">Add products in the admin panel to see them here.</p>
+            </div>
+          ) : (
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {filteredProducts.map((product) => (
+                <div 
+                  key={product.id} 
+                  className="group bg-card/80 backdrop-blur rounded-lg border border-border overflow-hidden hover:border-primary/50 transition-colors"
+                >
+                  {product.image_url ? (
+                    <div className="aspect-square overflow-hidden">
+                      <img 
+                        src={product.image_url} 
+                        alt={product.name} 
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
+                      />
+                    </div>
+                  ) : (
+                    <div className="aspect-square bg-secondary flex items-center justify-center">
+                      <Package className="w-16 h-16 text-muted-foreground" />
+                    </div>
+                  )}
+                  <div className="p-4">
+                    {product.category && (
+                      <div className="text-xs text-primary mb-1">{product.category}</div>
+                    )}
+                    <h3 className="font-medium mb-1 group-hover:text-primary transition-colors">
+                      {product.name}
+                    </h3>
+                    {product.description && (
+                      <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
+                        {product.description}
+                      </p>
+                    )}
+                    <div className="flex items-center justify-between">
+                      <span className="text-lg font-bold text-primary">
+                        EUR {Number(product.price).toFixed(2)}
+                      </span>
+                      <Button size="sm" className="bg-primary hover:bg-primary/90 gap-1">
+                        <ShoppingCart className="w-4 h-4" />
+                        Add
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
     </div>

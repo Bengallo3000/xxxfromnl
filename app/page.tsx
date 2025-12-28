@@ -75,7 +75,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-background relative">
-      <MatrixEffect opacity={0.08} />
+      <MatrixEffect opacity={0.25} />
       <div className="absolute inset-0 scanlines opacity-20 pointer-events-none z-[1]" />
       
       <section className="relative min-h-[600px] flex items-center justify-center overflow-hidden">
@@ -111,7 +111,7 @@ export default function HomePage() {
                   href="https://theplug.u" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20"
+                  className="absolute -top-16 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20"
                 >
                   <img
                     src="/theplug-member.png"

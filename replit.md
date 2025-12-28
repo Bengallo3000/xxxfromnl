@@ -55,6 +55,10 @@ Access at `/admin` with password: `demo123`
 - **Header/Footer**: Customize colors, logo, footer text, copyright
 - **Support**: Configure messenger session ID for support button
 - **Crypto**: Add crypto wallet addresses for checkout payments
+- **Orders**: View and manage customer orders with status updates
+- **Payments**: Track and manage payment transactions
+- **Themes**: Choose from 5 pre-designed shop themes
+- **Telegram Bot**: Manage orders and products via Telegram bot
 
 ## Environment Variables
 - `NEXT_PUBLIC_ADMIN_PASSWORD`: Client-side login check (default: demo123)
@@ -67,6 +71,10 @@ pnpm dev  # Starts on port 5000
 ```
 
 ## Recent Changes
+- 2025-12-28: Added Orders management with status tracking (new, confirmed, processing, shipped, delivered, cancelled)
+- 2025-12-28: Added Payments management with transaction tracking
+- 2025-12-28: Added Telegram bot integration for managing orders/products via Telegram
+- 2025-12-28: Added Shop Themes with 5 pre-made designs (Dark Red, Ocean Blue, Forest Green, Royal Purple, Sunset Orange)
 - 2025-12-28: Enhanced hero text - larger/bolder with stronger Dutch flag colors (red/white/blue)
 - 2025-12-28: Added Categories management with shop filtering
 - 2025-12-28: Added Banners system for header/footer with various sizes for backlinks

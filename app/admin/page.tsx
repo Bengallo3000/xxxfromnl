@@ -9,7 +9,8 @@ import {
   Navigation, Settings, Image as ImageIcon, Package, Tag, FileText, 
   Megaphone, Layout, HeadphonesIcon, Bitcoin, BarChart3, Bot, 
   Cog, Sparkles, MessageSquare, Eye, Pencil, Trash2, GripVertical,
-  Key, LogOut, Terminal, Plus, Upload, X, Loader2, Link, Wallet
+  Key, LogOut, Terminal, Plus, Upload, X, Loader2, Link, Wallet,
+  ShoppingCart, CreditCard, Palette, Send, Check, Clock, Truck, XCircle
 } from "lucide-react"
 
 const adminTabs = [
@@ -23,6 +24,10 @@ const adminTabs = [
   { id: "header-footer", name: "Header/Footer", icon: Layout },
   { id: "support", name: "Support", icon: HeadphonesIcon },
   { id: "crypto", name: "Crypto", icon: Bitcoin },
+  { id: "orders", name: "Orders", icon: ShoppingCart },
+  { id: "payments", name: "Payments", icon: CreditCard },
+  { id: "themes", name: "Themes", icon: Palette },
+  { id: "telegram", name: "Telegram Bot", icon: Send },
 ]
 
 interface NavItem { id: number; label: string; href: string; sort_order: number }
@@ -32,6 +37,9 @@ interface Page { id: number; slug: string; title: string; content: string }
 interface Category { id: number; name: string; slug: string; image_url: string }
 interface Banner { id: number; name: string; image_url: string; link_url: string; position: string; size: string; is_active: boolean }
 interface CryptoWallet { id: number; currency: string; wallet_address: string; is_active: boolean }
+interface Order { id: number; order_number: string; customer_email: string; customer_name: string; customer_address: string; items: any[]; total_amount: number; payment_method: string; payment_status: string; order_status: string; notes: string; created_at: string }
+interface Payment { id: number; order_id: number; order_number?: string; customer_email?: string; payment_method: string; amount: number; currency: string; transaction_id: string; status: string; crypto_address: string; notes: string; created_at: string }
+interface ShopTheme { id: number; name: string; is_active: boolean; primary_color: string; secondary_color: string; accent_color: string; background_color: string; text_color: string; header_style: string; font_family: string }
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -73,6 +81,10 @@ export default function AdminPage() {
   const [showCryptoForm, setShowCryptoForm] = useState(false)
   const [cryptoForm, setCryptoForm] = useState({ currency: "BTC", wallet_address: "" })
 
+  const [orders, setOrders] = useState<Order[]>([])
+  const [payments, setPayments] = useState<Payment[]>([])
+  const [shopThemes, setShopThemes] = useState<ShopTheme[]>([])
+
   useEffect(() => {
     if (isAuthenticated) {
       initDatabase()
@@ -90,7 +102,8 @@ export default function AdminPage() {
 
   const loadData = async () => {
     try {
-      const [navRes, imgRes, prodRes, pageRes, catRes, bannerRes, settingsRes, cryptoRes] = await Promise.all([
+      const authHeaders = { 'x-admin-token': adminToken }
+      const [navRes, imgRes, prodRes, pageRes, catRes, bannerRes, settingsRes, cryptoRes, ordersRes, paymentsRes, themesRes] = await Promise.all([
         fetch('/api/navigation'),
         fetch('/api/images'),
         fetch('/api/products'),
@@ -98,7 +111,10 @@ export default function AdminPage() {
         fetch('/api/categories'),
         fetch('/api/banners'),
         fetch('/api/settings'),
-        fetch('/api/crypto')
+        fetch('/api/crypto'),
+        fetch('/api/orders', { headers: authHeaders }),
+        fetch('/api/payments', { headers: authHeaders }),
+        fetch('/api/themes')
       ])
       setNavItems(await navRes.json())
       setImages(await imgRes.json())
@@ -108,6 +124,11 @@ export default function AdminPage() {
       setBanners(await bannerRes.json())
       setSiteSettings(await settingsRes.json())
       setCryptoWallets(await cryptoRes.json())
+      const ordersData = await ordersRes.json()
+      setOrders(Array.isArray(ordersData) ? ordersData : [])
+      const paymentsData = await paymentsRes.json()
+      setPayments(Array.isArray(paymentsData) ? paymentsData : [])
+      setShopThemes(await themesRes.json())
     } catch (error) {
       console.error('Load error:', error)
     }
@@ -399,6 +420,79 @@ export default function AdminPage() {
       showMessage("Wallet deleted!")
     } catch (error) {
       showMessage("Error deleting wallet")
+    }
+  }
+
+  const updateOrderStatus = async (id: number, order_status: string) => {
+    try {
+      await fetch('/api/orders', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'x-admin-token': adminToken },
+        body: JSON.stringify({ id, order_status })
+      })
+      loadData()
+      showMessage(`Order updated to ${order_status}!`)
+    } catch (error) {
+      showMessage("Error updating order")
+    }
+  }
+
+  const updatePaymentStatus = async (id: number, status: string) => {
+    try {
+      await fetch('/api/payments', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'x-admin-token': adminToken },
+        body: JSON.stringify({ id, status })
+      })
+      loadData()
+      showMessage(`Payment marked as ${status}!`)
+    } catch (error) {
+      showMessage("Error updating payment")
+    }
+  }
+
+  const deleteOrder = async (id: number) => {
+    if (!confirm("Delete this order and its payments?")) return
+    try {
+      await fetch('/api/orders', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json', 'x-admin-token': adminToken },
+        body: JSON.stringify({ id })
+      })
+      loadData()
+      showMessage("Order deleted!")
+    } catch (error) {
+      showMessage("Error deleting order")
+    }
+  }
+
+  const activateTheme = async (id: number) => {
+    try {
+      await fetch('/api/themes', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'x-admin-token': adminToken },
+        body: JSON.stringify({ id })
+      })
+      loadData()
+      showMessage("Theme activated!")
+    } catch (error) {
+      showMessage("Error activating theme")
+    }
+  }
+
+  const getStatusColor = (status: string) => {
+    switch(status) {
+      case 'new': return 'bg-blue-500/20 text-blue-400'
+      case 'confirmed': return 'bg-yellow-500/20 text-yellow-400'
+      case 'processing': return 'bg-orange-500/20 text-orange-400'
+      case 'shipped': return 'bg-purple-500/20 text-purple-400'
+      case 'delivered': return 'bg-green-500/20 text-green-400'
+      case 'cancelled': return 'bg-red-500/20 text-red-400'
+      case 'pending': return 'bg-yellow-500/20 text-yellow-400'
+      case 'paid': return 'bg-green-500/20 text-green-400'
+      case 'completed': return 'bg-green-500/20 text-green-400'
+      case 'failed': return 'bg-red-500/20 text-red-400'
+      default: return 'bg-gray-500/20 text-gray-400'
     }
   }
 
@@ -961,6 +1055,218 @@ export default function AdminPage() {
                     </div>
                   ))
                 )}
+              </div>
+            </div>
+          )}
+
+          {activeTab === "orders" && (
+            <div>
+              <h2 className="text-xl font-bold mb-6">Order Management</h2>
+              <p className="text-muted-foreground mb-6">View and manage all customer orders. Update order status and track payments.</p>
+              <div className="space-y-4">
+                {orders.length === 0 ? (
+                  <div className="text-center py-12 text-muted-foreground">No orders yet. Orders will appear here when customers place them.</div>
+                ) : (
+                  orders.map((order) => (
+                    <div key={order.id} className="p-4 bg-secondary/50 rounded-lg border border-border">
+                      <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
+                        <div>
+                          <div className="font-bold text-lg">{order.order_number}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {order.customer_name || 'Guest'} • {order.customer_email || 'No email'}
+                          </div>
+                          <div className="text-xs text-muted-foreground mt-1">
+                            {new Date(order.created_at).toLocaleString('de-DE')}
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-xl font-bold text-primary">€{Number(order.total_amount).toFixed(2)}</div>
+                          <div className="flex gap-2 mt-2">
+                            <span className={`px-2 py-0.5 rounded text-xs ${getStatusColor(order.order_status)}`}>{order.order_status}</span>
+                            <span className={`px-2 py-0.5 rounded text-xs ${getStatusColor(order.payment_status)}`}>{order.payment_status}</span>
+                          </div>
+                        </div>
+                      </div>
+                      {order.customer_address && (
+                        <div className="text-sm text-muted-foreground mb-3 p-2 bg-background/50 rounded">{order.customer_address}</div>
+                      )}
+                      <div className="flex flex-wrap gap-2">
+                        <Button size="sm" variant="outline" className="gap-1" onClick={() => updateOrderStatus(order.id, 'confirmed')}>
+                          <Check className="w-3 h-3" /> Confirm
+                        </Button>
+                        <Button size="sm" variant="outline" className="gap-1" onClick={() => updateOrderStatus(order.id, 'processing')}>
+                          <Clock className="w-3 h-3" /> Processing
+                        </Button>
+                        <Button size="sm" variant="outline" className="gap-1" onClick={() => updateOrderStatus(order.id, 'shipped')}>
+                          <Truck className="w-3 h-3" /> Shipped
+                        </Button>
+                        <Button size="sm" variant="outline" className="gap-1" onClick={() => updateOrderStatus(order.id, 'delivered')}>
+                          <Check className="w-3 h-3" /> Delivered
+                        </Button>
+                        <Button size="sm" variant="outline" className="gap-1 text-red-400 hover:text-red-300" onClick={() => updateOrderStatus(order.id, 'cancelled')}>
+                          <XCircle className="w-3 h-3" /> Cancel
+                        </Button>
+                        <Button size="sm" variant="ghost" className="gap-1 text-red-400 hover:bg-red-500/20" onClick={() => deleteOrder(order.id)}>
+                          <Trash2 className="w-3 h-3" /> Delete
+                        </Button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
+
+          {activeTab === "payments" && (
+            <div>
+              <h2 className="text-xl font-bold mb-6">Payment Management</h2>
+              <p className="text-muted-foreground mb-6">Track and manage all payment transactions. Mark payments as completed or failed.</p>
+              <div className="space-y-4">
+                {payments.length === 0 ? (
+                  <div className="text-center py-12 text-muted-foreground">No payments yet. Payment records will appear here.</div>
+                ) : (
+                  payments.map((payment) => (
+                    <div key={payment.id} className="p-4 bg-secondary/50 rounded-lg border border-border">
+                      <div className="flex flex-wrap items-start justify-between gap-4 mb-3">
+                        <div>
+                          <div className="font-bold">{payment.order_number || `Payment #${payment.id}`}</div>
+                          <div className="text-sm text-muted-foreground">{payment.customer_email || 'No email'}</div>
+                          <div className="text-xs text-muted-foreground mt-1">
+                            {payment.payment_method} • {new Date(payment.created_at).toLocaleString('de-DE')}
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-xl font-bold text-primary">{payment.currency} {Number(payment.amount).toFixed(2)}</div>
+                          <span className={`px-2 py-0.5 rounded text-xs ${getStatusColor(payment.status)}`}>{payment.status}</span>
+                        </div>
+                      </div>
+                      {payment.transaction_id && (
+                        <div className="text-xs text-muted-foreground font-mono mb-2">TX: {payment.transaction_id}</div>
+                      )}
+                      {payment.crypto_address && (
+                        <div className="text-xs text-muted-foreground font-mono mb-2">Wallet: {payment.crypto_address}</div>
+                      )}
+                      <div className="flex flex-wrap gap-2">
+                        <Button size="sm" variant="outline" className="gap-1" onClick={() => updatePaymentStatus(payment.id, 'completed')}>
+                          <Check className="w-3 h-3" /> Mark Paid
+                        </Button>
+                        <Button size="sm" variant="outline" className="gap-1 text-red-400 hover:text-red-300" onClick={() => updatePaymentStatus(payment.id, 'failed')}>
+                          <XCircle className="w-3 h-3" /> Mark Failed
+                        </Button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
+
+          {activeTab === "themes" && (
+            <div>
+              <h2 className="text-xl font-bold mb-6">Shop Design Themes</h2>
+              <p className="text-muted-foreground mb-6">Choose from 5 pre-designed themes for your shop. Click "Activate" to apply a theme.</p>
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {shopThemes.map((theme) => (
+                  <div key={theme.id} className={`p-4 rounded-lg border-2 transition-all ${theme.is_active ? 'border-primary bg-primary/10' : 'border-border bg-secondary/50 hover:border-primary/50'}`}>
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="font-bold">{theme.name}</h3>
+                      {theme.is_active && <span className="text-xs bg-primary text-white px-2 py-0.5 rounded">Active</span>}
+                    </div>
+                    <div className="flex gap-2 mb-3">
+                      <div className="w-8 h-8 rounded-full border-2 border-white/20" style={{ backgroundColor: theme.primary_color }} title="Primary" />
+                      <div className="w-8 h-8 rounded-full border-2 border-white/20" style={{ backgroundColor: theme.secondary_color }} title="Secondary" />
+                      <div className="w-8 h-8 rounded-full border-2 border-white/20" style={{ backgroundColor: theme.accent_color }} title="Accent" />
+                      <div className="w-8 h-8 rounded-full border-2 border-white/20" style={{ backgroundColor: theme.background_color }} title="Background" />
+                    </div>
+                    <div className="text-xs text-muted-foreground mb-3">
+                      <div>Style: {theme.header_style}</div>
+                      <div>Font: {theme.font_family}</div>
+                    </div>
+                    {!theme.is_active && (
+                      <Button size="sm" className="w-full bg-primary hover:bg-primary/90" onClick={() => activateTheme(theme.id)}>
+                        Activate Theme
+                      </Button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {activeTab === "telegram" && (
+            <div>
+              <h2 className="text-xl font-bold mb-6">Telegram Bot Integration</h2>
+              <p className="text-muted-foreground mb-6">
+                Connect a Telegram bot to manage orders and products directly from Telegram.
+                You can view orders, update status, and even add new products with photo uploads.
+              </p>
+              <div className="max-w-2xl space-y-6">
+                <div className="p-4 bg-secondary/50 rounded-lg border border-border">
+                  <h3 className="font-medium mb-4 flex items-center gap-2">
+                    <Send className="w-5 h-5 text-primary" />
+                    Setup Instructions
+                  </h3>
+                  <ol className="space-y-3 text-sm text-muted-foreground">
+                    <li className="flex gap-3">
+                      <span className="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold shrink-0">1</span>
+                      <span>Create a new bot with <strong>@BotFather</strong> on Telegram and get your bot token.</span>
+                    </li>
+                    <li className="flex gap-3">
+                      <span className="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold shrink-0">2</span>
+                      <span>Add your bot token to your environment variables as <code className="bg-background px-1 rounded">TELEGRAM_BOT_TOKEN</code>.</span>
+                    </li>
+                    <li className="flex gap-3">
+                      <span className="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold shrink-0">3</span>
+                      <span>Set the webhook URL in Telegram to: <code className="bg-background px-1 rounded break-all">{typeof window !== 'undefined' ? window.location.origin : ''}/api/telegram</code></span>
+                    </li>
+                    <li className="flex gap-3">
+                      <span className="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold shrink-0">4</span>
+                      <span>Start chatting with your bot! Use <code className="bg-background px-1 rounded">/start</code> to see all commands.</span>
+                    </li>
+                  </ol>
+                </div>
+                <div className="p-4 bg-secondary/50 rounded-lg border border-border">
+                  <h3 className="font-medium mb-4">Available Bot Commands</h3>
+                  <div className="space-y-2 text-sm font-mono">
+                    <div className="flex gap-4"><span className="text-primary">/start</span><span className="text-muted-foreground">Show help and commands</span></div>
+                    <div className="flex gap-4"><span className="text-primary">/orders</span><span className="text-muted-foreground">List recent orders</span></div>
+                    <div className="flex gap-4"><span className="text-primary">/products</span><span className="text-muted-foreground">List recent products</span></div>
+                    <div className="flex gap-4"><span className="text-primary">/stats</span><span className="text-muted-foreground">Shop statistics</span></div>
+                    <div className="flex gap-4"><span className="text-primary">/order_[ID]</span><span className="text-muted-foreground">View order details</span></div>
+                    <div className="flex gap-4"><span className="text-primary">/confirm_[ID]</span><span className="text-muted-foreground">Confirm an order</span></div>
+                    <div className="flex gap-4"><span className="text-primary">/ship_[ID]</span><span className="text-muted-foreground">Mark order as shipped</span></div>
+                    <div className="flex gap-4"><span className="text-primary">/product_[ID]</span><span className="text-muted-foreground">View product details</span></div>
+                  </div>
+                </div>
+                <div className="p-4 bg-secondary/50 rounded-lg border border-border">
+                  <h3 className="font-medium mb-4">Add Products via Telegram</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Send a photo with a caption in this format to create a new product:
+                  </p>
+                  <pre className="mt-2 p-2 bg-background rounded text-sm">
+{`Product Name
+29.99
+Category Name
+Product description here...`}
+                  </pre>
+                </div>
+                <form onSubmit={saveSettings} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Telegram Bot Token</label>
+                    <Input 
+                      value={siteSettings.telegram_bot_token || ""} 
+                      onChange={(e) => setSiteSettings({...siteSettings, telegram_bot_token: e.target.value})} 
+                      placeholder="Enter your Telegram bot token"
+                      className="bg-input font-mono text-sm"
+                      type="password"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">This is stored securely and used for bot authentication.</p>
+                  </div>
+                  <Button type="submit" className="bg-primary hover:bg-primary/90" disabled={loading}>
+                    {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                    Save Telegram Settings
+                  </Button>
+                </form>
               </div>
             </div>
           )}

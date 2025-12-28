@@ -5,6 +5,7 @@ import { Analytics } from "@vercel/analytics/next"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { SupportButton } from "@/components/support-button"
+import { ShopThemeProvider } from "@/components/shop-theme-provider"
 import { Toaster } from "@/components/ui/sonner"
 import "./globals.css"
 
@@ -53,12 +54,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="font-sans antialiased">
-        <Header />
-        <main>{children}</main>
-        <Footer />
-        <SupportButton />
-        <Toaster />
-        <Analytics />
+        <ShopThemeProvider>
+          <Header />
+          <main>{children}</main>
+          <Footer />
+          <SupportButton />
+          <Toaster />
+          <Analytics />
+        </ShopThemeProvider>
       </body>
     </html>
   )

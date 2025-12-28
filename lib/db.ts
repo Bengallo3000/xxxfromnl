@@ -81,6 +81,70 @@ export async function initDb() {
         sort_order INTEGER DEFAULT 0,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
+
+      CREATE TABLE IF NOT EXISTS orders (
+        id SERIAL PRIMARY KEY,
+        order_number VARCHAR(50) UNIQUE NOT NULL,
+        customer_email VARCHAR(255),
+        customer_name VARCHAR(255),
+        customer_address TEXT,
+        items JSONB NOT NULL,
+        total_amount DECIMAL(10, 2) NOT NULL,
+        payment_method VARCHAR(50),
+        payment_status VARCHAR(50) DEFAULT 'pending',
+        order_status VARCHAR(50) DEFAULT 'new',
+        notes TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+
+      CREATE TABLE IF NOT EXISTS payments (
+        id SERIAL PRIMARY KEY,
+        order_id INTEGER REFERENCES orders(id),
+        payment_method VARCHAR(50) NOT NULL,
+        amount DECIMAL(10, 2) NOT NULL,
+        currency VARCHAR(10) DEFAULT 'EUR',
+        transaction_id VARCHAR(255),
+        status VARCHAR(50) DEFAULT 'pending',
+        crypto_address TEXT,
+        notes TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+
+      CREATE TABLE IF NOT EXISTS shop_themes (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(100) NOT NULL,
+        is_active BOOLEAN DEFAULT false,
+        primary_color VARCHAR(20),
+        secondary_color VARCHAR(20),
+        accent_color VARCHAR(20),
+        background_color VARCHAR(20),
+        text_color VARCHAR(20),
+        header_style VARCHAR(50),
+        font_family VARCHAR(100),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+
+      INSERT INTO shop_themes (name, is_active, primary_color, secondary_color, accent_color, background_color, text_color, header_style, font_family)
+      SELECT 'Dark Red', true, '#D64545', '#1a1a1a', '#FF4444', '#0a0a0a', '#ffffff', 'minimal', 'Inter'
+      WHERE NOT EXISTS (SELECT 1 FROM shop_themes WHERE name = 'Dark Red');
+
+      INSERT INTO shop_themes (name, is_active, primary_color, secondary_color, accent_color, background_color, text_color, header_style, font_family)
+      SELECT 'Ocean Blue', false, '#2196F3', '#1565C0', '#64B5F6', '#0D1B2A', '#E0E1DD', 'classic', 'Roboto'
+      WHERE NOT EXISTS (SELECT 1 FROM shop_themes WHERE name = 'Ocean Blue');
+
+      INSERT INTO shop_themes (name, is_active, primary_color, secondary_color, accent_color, background_color, text_color, header_style, font_family)
+      SELECT 'Forest Green', false, '#4CAF50', '#2E7D32', '#81C784', '#1B2D1B', '#E8F5E9', 'modern', 'Poppins'
+      WHERE NOT EXISTS (SELECT 1 FROM shop_themes WHERE name = 'Forest Green');
+
+      INSERT INTO shop_themes (name, is_active, primary_color, secondary_color, accent_color, background_color, text_color, header_style, font_family)
+      SELECT 'Royal Purple', false, '#9C27B0', '#6A1B9A', '#CE93D8', '#1A0A1F', '#F3E5F5', 'elegant', 'Playfair Display'
+      WHERE NOT EXISTS (SELECT 1 FROM shop_themes WHERE name = 'Royal Purple');
+
+      INSERT INTO shop_themes (name, is_active, primary_color, secondary_color, accent_color, background_color, text_color, header_style, font_family)
+      SELECT 'Sunset Orange', false, '#FF5722', '#E64A19', '#FFAB91', '#1F1410', '#FBE9E7', 'bold', 'Montserrat'
+      WHERE NOT EXISTS (SELECT 1 FROM shop_themes WHERE name = 'Sunset Orange');
     `);
   } finally {
     client.release();

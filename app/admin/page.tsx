@@ -32,7 +32,7 @@ const adminTabs = [
 
 interface NavItem { id: number; label: string; href: string; sort_order: number }
 interface ImageItem { id: number; name: string; url: string; alt_text: string }
-interface Product { id: number; name: string; description: string; price: number; image_url: string; category: string; in_stock: boolean }
+interface Product { id: number; name: string; description: string; price: number; image_url: string; category: string; in_stock: boolean; is_free: boolean }
 interface Page { id: number; slug: string; title: string; content: string }
 interface Category { id: number; name: string; slug: string; image_url: string }
 interface Banner { id: number; name: string; image_url: string; link_url: string; position: string; size: string; is_active: boolean }
@@ -59,7 +59,7 @@ export default function AdminPage() {
 
   const [products, setProducts] = useState<Product[]>([])
   const [showProductForm, setShowProductForm] = useState(false)
-  const [productForm, setProductForm] = useState({ name: "", description: "", price: "", category: "" })
+  const [productForm, setProductForm] = useState({ name: "", description: "", price: "", category: "", is_free: false })
   const [productImage, setProductImage] = useState<File | null>(null)
 
   const [pages, setPages] = useState<Page[]>([])
@@ -227,8 +227,9 @@ export default function AdminPage() {
       const formData = new FormData()
       formData.append('name', productForm.name)
       formData.append('description', productForm.description)
-      formData.append('price', productForm.price)
+      formData.append('price', productForm.is_free ? '0' : productForm.price)
       formData.append('category', productForm.category)
+      formData.append('is_free', String(productForm.is_free))
       if (productImage) {
         formData.append('image', productImage)
       }
@@ -684,7 +685,11 @@ export default function AdminPage() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-2">Price (EUR)</label>
-                      <Input type="number" step="0.01" value={productForm.price} onChange={(e) => setProductForm({...productForm, price: e.target.value})} placeholder="e.g. 29.99" className="bg-input" required />
+                      <Input type="number" step="0.01" value={productForm.is_free ? '0' : productForm.price} onChange={(e) => setProductForm({...productForm, price: e.target.value})} placeholder="e.g. 29.99" className="bg-input" disabled={productForm.is_free} required={!productForm.is_free} />
+                    </div>
+                    <div className="flex items-center gap-3 pt-6">
+                      <input type="checkbox" id="is_free" checked={productForm.is_free} onChange={(e) => setProductForm({...productForm, is_free: e.target.checked, price: e.target.checked ? '0' : productForm.price})} className="w-5 h-5 rounded border-green-500 text-green-500 focus:ring-green-500" />
+                      <label htmlFor="is_free" className="text-sm font-medium text-green-500">Free Product (Gratis)</label>
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-2">Category</label>
@@ -719,8 +724,13 @@ export default function AdminPage() {
                       </div>
                     )}
                     <div className="p-4">
-                      <div className="font-medium">{product.name}</div>
-                      <div className="text-primary font-bold">EUR {Number(product.price).toFixed(2)}</div>
+                      <div className="flex items-center gap-2">
+                        <div className="font-medium">{product.name}</div>
+                        {product.is_free && <span className="bg-green-500 text-black text-xs font-bold px-2 py-0.5 rounded">GRATIS</span>}
+                      </div>
+                      <div className={`font-bold ${product.is_free ? 'text-green-500' : 'text-primary'}`}>
+                        {product.is_free ? 'GRATIS' : `EUR ${Number(product.price).toFixed(2)}`}
+                      </div>
                       {product.category && <div className="text-xs text-muted-foreground mt-1">{product.category}</div>}
                     </div>
                     <Button variant="ghost" size="icon" className="absolute top-2 right-2 bg-background/80 hover:bg-primary/20 text-primary opacity-0 group-hover:opacity-100" onClick={() => deleteProduct(product.id)}>
@@ -916,6 +926,21 @@ export default function AdminPage() {
                 <div>
                   <label className="block text-sm font-medium mb-2">Contact Email</label>
                   <Input value={siteSettings.contact_email || ""} onChange={(e) => setSiteSettings({...siteSettings, contact_email: e.target.value})} placeholder="support@fromnl.pro" className="bg-input" />
+                </div>
+                <div className="p-4 bg-green-500/10 border border-green-500/30 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <input 
+                      type="checkbox" 
+                      id="free_products_enabled" 
+                      checked={siteSettings.free_products_enabled === 'true'} 
+                      onChange={(e) => setSiteSettings({...siteSettings, free_products_enabled: e.target.checked ? 'true' : 'false'})} 
+                      className="w-5 h-5 rounded border-green-500 text-green-500 focus:ring-green-500" 
+                    />
+                    <div>
+                      <label htmlFor="free_products_enabled" className="text-sm font-medium text-green-500">Enable Free Products Section</label>
+                      <p className="text-xs text-muted-foreground mt-1">Show a separate section for free products in the shop</p>
+                    </div>
+                  </div>
                 </div>
                 <Button type="submit" className="bg-primary hover:bg-primary/90" disabled={loading}>
                   {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}

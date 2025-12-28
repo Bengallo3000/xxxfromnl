@@ -19,8 +19,9 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData();
     const name = formData.get('name') as string;
     const description = formData.get('description') as string || '';
-    const price = parseFloat(formData.get('price') as string);
+    const price = parseFloat(formData.get('price') as string) || 0;
     const category = formData.get('category') as string || '';
+    const is_free = formData.get('is_free') === 'true';
     const file = formData.get('image') as File | null;
 
     let imageUrl = '';
@@ -38,8 +39,8 @@ export async function POST(request: NextRequest) {
     }
 
     const result = await query(
-      'INSERT INTO products (name, description, price, image_url, category) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-      [name, description, price, imageUrl, category]
+      'INSERT INTO products (name, description, price, image_url, category, is_free) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+      [name, description, is_free ? 0 : price, imageUrl, category, is_free]
     );
 
     return NextResponse.json(result.rows[0]);

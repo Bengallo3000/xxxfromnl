@@ -2,9 +2,10 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import { Shield, Truck, Star, Check, Tag, Package, ShoppingCart } from "lucide-react"
+import { Shield, Truck, Star, Check, Tag, Package, ShoppingCart, Gift } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useState, useEffect } from "react"
+import { MatrixEffect } from "@/components/matrix-effect"
 
 interface Product {
   id: number
@@ -13,6 +14,7 @@ interface Product {
   price: number
   image_url: string
   category: string
+  is_free?: boolean
 }
 
 interface Category {
@@ -25,6 +27,7 @@ export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([])
   const [categories, setCategories] = useState<Category[]>([])
   const [selectedCategory, setSelectedCategory] = useState("Alle")
+  const [freeProductsEnabled, setFreeProductsEnabled] = useState(false)
 
   useEffect(() => {
     fetchData()
@@ -32,35 +35,48 @@ export default function HomePage() {
 
   const fetchData = async () => {
     try {
-      const [prodRes, catRes] = await Promise.all([
+      const [prodRes, catRes, settingsRes] = await Promise.all([
         fetch('/api/products'),
-        fetch('/api/categories')
+        fetch('/api/categories'),
+        fetch('/api/settings')
       ])
       const prodData = await prodRes.json()
       const catData = await catRes.json()
+      const settingsData = await settingsRes.json()
       if (Array.isArray(prodData)) {
         setProducts(prodData)
       }
       if (Array.isArray(catData)) {
         setCategories(catData)
       }
+      if (settingsData && settingsData.free_products_enabled === 'true') {
+        setFreeProductsEnabled(true)
+      }
     } catch (error) {
       console.log('No data loaded')
     }
   }
+
+  const freeProducts = products.filter(p => p.is_free === true)
+  const premiumProducts = products.filter(p => !p.is_free)
 
   const displayCategories = [
     { name: "Alle", active: selectedCategory === "Alle" },
     ...categories.map(cat => ({ name: cat.name, active: selectedCategory === cat.name }))
   ]
 
-  const filteredProducts = selectedCategory === "Alle" 
-    ? products 
-    : products.filter(p => p.category === selectedCategory)
+  const filteredPremiumProducts = selectedCategory === "Alle" 
+    ? premiumProducts 
+    : premiumProducts.filter(p => p.category === selectedCategory)
+  
+  const filteredFreeProducts = selectedCategory === "Alle"
+    ? freeProducts
+    : freeProducts.filter(p => p.category === selectedCategory)
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="absolute inset-0 scanlines opacity-20 pointer-events-none" />
+    <div className="min-h-screen bg-background relative">
+      <MatrixEffect opacity={0.08} />
+      <div className="absolute inset-0 scanlines opacity-20 pointer-events-none z-[1]" />
       
       <section className="relative min-h-[600px] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
@@ -194,7 +210,7 @@ export default function HomePage() {
             <span className="text-sm">Premium products can be paid with cryptocurrency. Secure transactions with Bitcoin, Ethereum and more.</span>
           </div>
           
-          {filteredProducts.length === 0 ? (
+          {filteredPremiumProducts.length === 0 ? (
             <div className="bg-card/50 backdrop-blur rounded-lg p-12 text-center border border-border/50">
               <Package className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
               <p className="text-muted-foreground">No products in this category yet.</p>
@@ -202,7 +218,7 @@ export default function HomePage() {
             </div>
           ) : (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {filteredProducts.map((product) => (
+              {filteredPremiumProducts.map((product) => (
                 <div 
                   key={product.id} 
                   className="group bg-card/80 backdrop-blur rounded-lg border border-border overflow-hidden hover:border-primary/50 transition-colors"
@@ -248,6 +264,74 @@ export default function HomePage() {
           )}
         </div>
       </section>
+
+      {freeProductsEnabled && filteredFreeProducts.length > 0 && (
+        <section className="py-12 relative z-10">
+          <div className="container mx-auto px-4">
+            <div className="flex items-center gap-2 mb-6">
+              <div className="w-1 h-6 bg-green-500 rounded-full" />
+              <h2 className="text-xl font-semibold">FREE PRODUCTS</h2>
+              <Gift className="w-5 h-5 text-green-500 ml-2" />
+            </div>
+            
+            <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-3 mb-8 flex items-center gap-2">
+              <Gift className="w-4 h-4 text-green-500" />
+              <span className="text-sm text-green-400">Diese Produkte sind kostenlos! Bestelle sie gratis mit deiner Bestellung.</span>
+            </div>
+            
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {filteredFreeProducts.map((product) => (
+                <div 
+                  key={product.id} 
+                  className="group bg-card/80 backdrop-blur rounded-lg border border-green-500/30 overflow-hidden hover:border-green-500/60 transition-colors"
+                >
+                  {product.image_url ? (
+                    <div className="aspect-square overflow-hidden relative">
+                      <img 
+                        src={product.image_url} 
+                        alt={product.name} 
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
+                      />
+                      <div className="absolute top-2 right-2 bg-green-500 text-black text-xs font-bold px-2 py-1 rounded">
+                        GRATIS
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="aspect-square bg-secondary flex items-center justify-center relative">
+                      <Gift className="w-16 h-16 text-green-500" />
+                      <div className="absolute top-2 right-2 bg-green-500 text-black text-xs font-bold px-2 py-1 rounded">
+                        GRATIS
+                      </div>
+                    </div>
+                  )}
+                  <div className="p-4">
+                    {product.category && (
+                      <div className="text-xs text-green-500 mb-1">{product.category}</div>
+                    )}
+                    <h3 className="font-medium mb-1 group-hover:text-green-400 transition-colors">
+                      {product.name}
+                    </h3>
+                    {product.description && (
+                      <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
+                        {product.description}
+                      </p>
+                    )}
+                    <div className="flex items-center justify-between">
+                      <span className="text-lg font-bold text-green-500">
+                        GRATIS
+                      </span>
+                      <Button size="sm" className="bg-green-600 hover:bg-green-500 text-black gap-1">
+                        <Gift className="w-4 h-4" />
+                        Get Free
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   )
 }

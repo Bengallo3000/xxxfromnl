@@ -105,7 +105,7 @@ export function Header() {
       >
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <Link href="/" className="flex items-center gap-2">
                 <img
                   src={settings.logo_url || "/fromnl-logo.png"}
@@ -116,9 +116,9 @@ export function Header() {
               </Link>
               <a href="https://theplug.u" target="_blank" rel="noopener noreferrer">
                 <img
-                  src="/theplug-badge.png"
+                  src="/theplug-member.png"
                   alt="ThePlug.u Member"
-                  className="h-8 w-auto opacity-80 hover:opacity-100 transition-opacity"
+                  className="h-12 w-auto opacity-90 hover:opacity-100 transition-opacity"
                 />
               </a>
             </div>

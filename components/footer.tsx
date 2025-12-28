@@ -194,9 +194,9 @@ export function Footer() {
         <div className="pt-8 border-t border-border flex flex-col items-center gap-4">
           <a href="https://theplug.u" target="_blank" rel="noopener noreferrer">
             <img
-              src="/theplug-badge.png"
+              src="/theplug-member.png"
               alt="Officially Approved ThePlug.u Member"
-              className="h-16 w-auto opacity-80 hover:opacity-100 transition-opacity"
+              className="h-24 w-auto opacity-90 hover:opacity-100 transition-opacity"
             />
           </a>
           <p className="text-sm text-muted-foreground">{settings.copyright_text || `© ${new Date().getFullYear()} FromNL.pro | All rights reserved`}</p>

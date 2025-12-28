@@ -35,7 +35,7 @@ export default function HomePage() {
             <p className="text-sm text-primary">★ Premium Dutch Quality</p>
           </div>
           
-          <h1 className="text-5xl md:text-8xl font-bold mb-4 tracking-tight text-glow-white">
+          <h1 className="text-7xl sm:text-9xl md:text-[12rem] lg:text-[16rem] font-bold mb-4 tracking-tight text-glow-white leading-none">
             <span className="text-white">from</span>
             <span className="bg-gradient-to-b from-[#D64545] via-white to-[#1E4C8E] bg-clip-text text-transparent">NL</span>
           </h1>

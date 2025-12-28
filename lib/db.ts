@@ -50,6 +50,35 @@ export async function initDb() {
         name VARCHAR(255) NOT NULL,
         slug VARCHAR(255) UNIQUE NOT NULL,
         image_url TEXT,
+        sort_order INTEGER DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+
+      CREATE TABLE IF NOT EXISTS banners (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        image_url TEXT NOT NULL,
+        link_url TEXT,
+        position VARCHAR(50) DEFAULT 'header',
+        size VARCHAR(50) DEFAULT 'medium',
+        is_active BOOLEAN DEFAULT true,
+        sort_order INTEGER DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+
+      CREATE TABLE IF NOT EXISTS site_settings (
+        id SERIAL PRIMARY KEY,
+        key VARCHAR(255) UNIQUE NOT NULL,
+        value TEXT,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+
+      CREATE TABLE IF NOT EXISTS crypto_wallets (
+        id SERIAL PRIMARY KEY,
+        currency VARCHAR(50) NOT NULL,
+        wallet_address TEXT NOT NULL,
+        is_active BOOLEAN DEFAULT true,
+        sort_order INTEGER DEFAULT 0,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);

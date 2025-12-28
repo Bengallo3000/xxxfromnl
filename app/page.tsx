@@ -77,9 +77,9 @@ export default function HomePage() {
             <p className="text-sm text-primary">★ Premium Dutch Quality</p>
           </div>
           
-          <h1 className="text-7xl sm:text-9xl md:text-[12rem] lg:text-[16rem] font-bold mb-4 tracking-tight text-glow-white leading-none">
-            <span className="text-white">from</span>
-            <span className="bg-gradient-to-b from-[#D64545] via-white to-[#1E4C8E] bg-clip-text text-transparent">NL</span>
+          <h1 className="text-8xl sm:text-[10rem] md:text-[14rem] lg:text-[18rem] font-black mb-4 tracking-tight text-glow-white leading-none">
+            <span className="text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.5)]">from</span>
+            <span className="bg-gradient-to-b from-[#FF1E1E] via-[#FFFFFF] to-[#0033CC] bg-clip-text text-transparent drop-shadow-[0_0_40px_rgba(255,30,30,0.6)]" style={{textShadow: '0 0 60px rgba(255,30,30,0.5), 0 0 120px rgba(0,51,204,0.4)'}}>NL</span>
           </h1>
           
           <p className="text-xl md:text-2xl text-white/80 mb-8 tracking-widest font-light">

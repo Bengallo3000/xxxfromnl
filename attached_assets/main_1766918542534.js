@@ -10,6 +10,18 @@ function escapeHtml(str) {
         .replace(/'/g, '&#39;');
 }
 
+function escapeJsString(str) {
+    if (str == null) return '';
+    return String(str)
+        .replace(/\\/g, '\\\\')
+        .replace(/'/g, "\\'")
+        .replace(/"/g, '\\"')
+        .replace(/\n/g, '\\n')
+        .replace(/\r/g, '\\r')
+        .replace(/</g, '\\x3c')
+        .replace(/>/g, '\\x3e');
+}
+
 // Global variables
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 let currentTheme = localStorage.getItem('theme') || 'light';
@@ -358,7 +370,7 @@ function loadProducts() {
                 <div class="relative">
                     <img src="${escapeHtml(product.image)}" alt="${escapeHtml(product.name)}" class="w-full h-48 object-cover">
                     <div class="absolute top-4 right-4">
-                        <button onclick="addToCart('${escapeHtml(product.id)}', '${escapeHtml(product.name)}', ${Number(product.price) || 0})" 
+                        <button onclick="addToCart('${escapeJsString(product.id)}', '${escapeJsString(product.name)}', ${Number(product.price) || 0})" 
                                 class="bg-green-600 text-white p-2 rounded-full hover:bg-green-700 transition-colors glow-effect">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5 6m0 0h9m-9 0V19a2 2 0 002 2h7a2 2 0 002-2v-4"></path>
@@ -379,7 +391,7 @@ function loadProducts() {
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-2xl font-bold text-green-600">€${Number(product.price) || 0}</span>
-                        <button onclick="addToCart('${escapeHtml(product.id)}', '${escapeHtml(product.name)}', ${Number(product.price) || 0})" 
+                        <button onclick="addToCart('${escapeJsString(product.id)}', '${escapeJsString(product.name)}', ${Number(product.price) || 0})" 
                                 class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors glow-effect">
                             Add to Cart
                         </button>
@@ -416,10 +428,10 @@ function loadProducts() {
                     </span>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button onclick="editProduct('${escapeHtml(product.id)}')" class="text-green-600 hover:text-green-900 mr-4">
+                    <button onclick="editProduct('${escapeJsString(product.id)}')" class="text-green-600 hover:text-green-900 mr-4">
                         Edit
                     </button>
-                    <button onclick="showDeleteModal('${escapeHtml(product.id)}')" class="text-red-600 hover:text-red-900">
+                    <button onclick="showDeleteModal('${escapeJsString(product.id)}')" class="text-red-600 hover:text-red-900">
                         Delete
                     </button>
                 </td>

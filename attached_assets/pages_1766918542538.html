@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Manager - fromNL.Top</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1a472a;
+            --secondary-color: #d4af37;
+            --accent-color: #ffffff;
+            --text-color: #2d3748;
+            --bg-color: #f8f9fa;
+        }
+        
+        body { 
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+        
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .gradient-text { 
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+        }
+        
+        .page-card { 
+            transition: all 0.3s ease; 
+            background: var(--accent-color);
+        }
+        
+        .page-card:hover { 
+            transform: translateY(-4px); 
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); 
+        }
+        
+        .modal { 
+            backdrop-filter: blur(5px); 
+        }
+        
+        .status-published { 
+            background-color: #10b981; 
+            color: white; 
+        }
+        
+        .status-draft { 
+            background-color: #f59e0b; 
+            color: white; 
+        }
+        
+        .status-archived { 
+            background-color: #6b7280; 
+            color: white; 
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-bold gradient-text">fromNL.Top Admin</h1>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <a href="admin.html" class="text-gray-700 hover:text-green-600 transition-colors">Dashboard</a>
+                    <a href="products.html" class="text-gray-700 hover:text-green-600 transition-colors">Products</a>
+                    <button onclick="logout()" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors">
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header Section -->
+    <div class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-900">Page Manager</h2>
+                    <p class="text-gray-600 mt-1">Create and manage custom pages for your store</p>
+                </div>
+                <button onclick="openAddPageModal()" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    <span>Add Page</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Page List -->
+        <div class="bg-white rounded-lg shadow overflow-hidden">
+            <div class="px-6 py-4 border-b">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-lg font-semibold">Pages</h3>
+                    <div class="flex items-center space-x-4">
+                        <select id="status-filter" class="text-sm border border-gray-300 rounded-lg px-3 py-1">
+                            <option value="all">All Status</option>
+                            <option value="published">Published</option>
+                            <option value="draft">Draft</option>
+                            <option value="archived">Archived</option>
+                        </select>
+                        <span id="page-count" class="text-sm text-gray-600">0 pages</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="pages-list" class="divide-y divide-gray-200">
+                <!-- Pages will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Page Modal -->
+    <div id="page-modal" class="fixed inset-0 z-50 hidden modal bg-black bg-opacity-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-2xl max-w-4xl w-full max-h-screen overflow-y-auto">
+            <div class="p-6 border-b">
+                <div class="flex justify-between items-center">
+                    <h3 id="modal-title" class="text-xl font-semibold">Add New Page</h3>
+                    <button onclick="closePageModal()" class="text-gray-500 hover:text-gray-700">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <form id="page-form" onsubmit="handlePageSubmit(event)" class="p-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Left Column -->
+                    <div class="lg:col-span-2">
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Page Title</label>
+                            <input type="text" id="page-title" required 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                   placeholder="Enter page title">
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Page URL Slug</label>
+                            <input type="text" id="page-slug" required 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent mono text-sm"
+                                   placeholder="about-us, contact, terms">
+                            <p class="text-xs text-gray-500 mt-1">URL will be: /pages/[slug]</p>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Page Content</label>
+                            <textarea id="page-content" rows="12" required 
+                                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                      placeholder="Write your page content here... You can use HTML tags for formatting."></textarea>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">SEO Meta Description</label>
+                            <textarea id="page-meta-description" rows="2" 
+                                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                      placeholder="Brief description for search engines (max 160 characters)"></textarea>
+                            <p class="text-xs text-gray-500 mt-1">This will appear in search engine results</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Column -->
+                    <div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Page Status</label>
+                            <select id="page-status" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                                <option value="draft">Draft</option>
+                                <option value="published">Published</option>
+                                <option value="archived">Archived</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Page Template</label>
+                            <select id="page-template" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                                <option value="default">Default Template</option>
+                                <option value="full-width">Full Width</option>
+                                <option value="sidebar">With Sidebar</option>
+                                <option value="landing">Landing Page</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Menu Order</label>
+                            <input type="number" id="page-order" min="0" value="0" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                            <p class="text-xs text-gray-500 mt-1">Lower numbers appear first in menus</p>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="flex items-center">
+                                <input type="checkbox" id="page-in-menu" checked class="mr-2 h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
+                                <span class="text-sm text-gray-700">Show in main navigation</span>
+                            </label>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="flex items-center">
+                                <input type="checkbox" id="page-in-footer" class="mr-2 h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
+                                <span class="text-sm text-gray-700">Show in footer links</span>
+                            </label>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Featured Image</label>
+                            <div id="featured-image-upload" class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer hover:border-green-500 transition-colors"
+                                 onclick="document.getElementById('featured-image-input').click()">
+                                <svg class="w-8 h-8 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                <p class="text-sm text-gray-600">Click to upload</p>
+                            </div>
+                            <input type="file" id="featured-image-input" accept="image/*" class="hidden">
+                            <div id="featured-image-preview" class="mt-2 hidden">
+                                <img id="preview-image" src="" alt="Preview" class="w-full h-32 object-cover rounded-lg">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end space-x-4 mt-8">
+                    <button type="button" onclick="previewPage()" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                        Preview
+                    </button>
+                    <button type="button" onclick="closePageModal()" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                        Save Page
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="fixed inset-0 z-50 hidden modal bg-black bg-opacity-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-2xl max-w-md w-full">
+            <div class="p-6">
+                <div class="text-center">
+                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+                        <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">Delete Page</h3>
+                    <p class="text-gray-600 mb-6">Are you sure you want to delete this page? This action cannot be undone.</p>
+                </div>
+                
+                <div class="flex justify-end space-x-4">
+                    <button onclick="closeDeleteModal()" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                        Cancel
+                    </button>
+                    <button onclick="confirmDelete()" class="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Page management system
+        let pages = [];
+        
+        // Load pages from localStorage
+        function loadStoredPages() {
+            const stored = localStorage.getItem('customPages');
+            if (stored) {
+                pages = JSON.parse(stored);
+            } else {
+                // Default pages if none exist
+                pages = [
+            {
+                id: 'about',
+                title: 'About Us',
+                slug: 'about',
+                content: 'Welcome to fromNL.Top, your premier source for high-quality products from the Netherlands. We are committed to providing the finest selection with discreet shipping worldwide.',
+                status: 'published',
+                template: 'default',
+                order: 1,
+                inMenu: true,
+                inFooter: true,
+                metaDescription: 'Learn more about fromNL.Top and our commitment to quality products and customer service.',
+                featuredImage: '',
+                createdAt: '2025-01-15',
+                updatedAt: '2025-01-15'
+            },
+            {
+                id: 'contact',
+                title: 'Contact',
+                slug: 'contact',
+                content: 'Get in touch with us through our support channels. We are available 24/7 via Telegram for any questions or concerns.',
+                status: 'published',
+                template: 'default',
+                order: 2,
+                inMenu: true,
+                inFooter: true,
+                metaDescription: 'Contact fromNL.Top support team for assistance with orders and products.',
+                featuredImage: '',
+                createdAt: '2025-01-14',
+                updatedAt: '2025-01-14'
+            },
+            {
+                id: 'terms',
+                title: 'Terms & Conditions',
+                slug: 'terms',
+                content: 'Please read these terms and conditions carefully before using our service. By accessing and using our service, you agree to be bound by these terms.',
+                status: 'published',
+                template: 'default',
+                order: 99,
+                inMenu: false,
+                inFooter: true,
+                metaDescription: 'Terms and conditions for using fromNL.Top services.',
+                featuredImage: '',
+                createdAt: '2025-01-10',
+                updatedAt: '2025-01-10'
+            }];
+            }
+        }
+        
+        let currentEditId = null;
+        let deletePageId = null;
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            loadStoredPages();
+            loadPages();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            // Status filter
+            document.getElementById('status-filter').addEventListener('change', filterPages);
+            
+            // Featured image upload
+            document.getElementById('featured-image-input').addEventListener('change', handleImageUpload);
+        }
+
+        function loadPages() {
+            const pagesList = document.getElementById('pages-list');
+            const pageCount = document.getElementById('page-count');
+            const statusFilter = document.getElementById('status-filter').value;
+            
+            let filteredPages = pages;
+            if (statusFilter !== 'all') {
+                filteredPages = pages.filter(page => page.status === statusFilter);
+            }
+            
+            // Sort by order
+            filteredPages.sort((a, b) => a.order - b.order);
+            
+            pageCount.textContent = `${filteredPages.length} pages`;
+            
+            if (filteredPages.length === 0) {
+                pagesList.innerHTML = `
+                    <div class="p-8 text-center text-gray-500">
+                        <svg class="w-12 h-12 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <p>No pages found</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            pagesList.innerHTML = filteredPages.map(page => `
+                <div class="p-6 hover:bg-gray-50 transition-colors">
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-3">
+                                <h4 class="text-lg font-semibold text-gray-900">${page.title}</h4>
+                                <span class="px-2 py-1 text-xs font-medium rounded-full ${getStatusClass(page.status)}">
+                                    ${page.status.charAt(0).toUpperCase() + page.status.slice(1)}
+                                </span>
+                                ${page.inMenu ? '<span class="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">Menu</span>' : ''}
+                                ${page.inFooter ? '<span class="px-2 py-1 text-xs bg-purple-100 text-purple-800 rounded-full">Footer</span>' : ''}
+                            </div>
+                            <p class="text-sm text-gray-600 mt-1">/pages/${page.slug}</p>
+                            <p class="text-sm text-gray-500 mt-2 line-clamp-2">${page.metaDescription || page.content.substring(0, 100)}...</p>
+                            <div class="flex items-center space-x-4 mt-2 text-xs text-gray-400">
+                                <span>Created: ${page.createdAt}</span>
+                                <span>Updated: ${page.updatedAt}</span>
+                                <span>Order: ${page.order}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="previewPage('${page.id}')" class="p-2 text-gray-500 hover:text-green-600 transition-colors" title="Preview">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                </svg>
+                            </button>
+                            <button onclick="editPage('${page.id}')" class="p-2 text-gray-500 hover:text-blue-600 transition-colors" title="Edit">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                </svg>
+                            </button>
+                            <button onclick="showDeleteModal('${page.id}')" class="p-2 text-gray-500 hover:text-red-600 transition-colors" title="Delete">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getStatusClass(status) {
+            switch (status) {
+                case 'published': return 'status-published';
+                case 'draft': return 'status-draft';
+                case 'archived': return 'status-archived';
+                default: return 'bg-gray-100 text-gray-800';
+            }
+        }
+
+        function filterPages() {
+            loadPages();
+        }
+
+        function openAddPageModal() {
+            currentEditId = null;
+            document.getElementById('modal-title').textContent = 'Add New Page';
+            document.getElementById('page-form').reset();
+            document.getElementById('page-status').value = 'draft';
+            document.getElementById('page-template').value = 'default';
+            document.getElementById('page-order').value = pages.length;
+            document.getElementById('page-in-menu').checked = false;
+            document.getElementById('page-in-footer').checked = true;
+            document.getElementById('featured-image-preview').classList.add('hidden');
+            document.getElementById('page-modal').classList.remove('hidden');
+            
+            // Animate modal
+            anime({
+                targets: '#page-modal .bg-white',
+                scale: [0.8, 1],
+                opacity: [0, 1],
+                duration: 300,
+                easing: 'easeOutQuad'
+            });
+        }
+
+        function editPage(pageId) {
+            currentEditId = pageId;
+            const page = pages.find(p => p.id === pageId);
+            
+            if (page) {
+                document.getElementById('modal-title').textContent = 'Edit Page';
+                document.getElementById('page-title').value = page.title;
+                document.getElementById('page-slug').value = page.slug;
+                document.getElementById('page-content').value = page.content;
+                document.getElementById('page-meta-description').value = page.metaDescription || '';
+                document.getElementById('page-status').value = page.status;
+                document.getElementById('page-template').value = page.template;
+                document.getElementById('page-order').value = page.order;
+                document.getElementById('page-in-menu').checked = page.inMenu;
+                document.getElementById('page-in-footer').checked = page.inFooter;
+                
+                if (page.featuredImage) {
+                    document.getElementById('preview-image').src = page.featuredImage;
+                    document.getElementById('featured-image-preview').classList.remove('hidden');
+                } else {
+                    document.getElementById('featured-image-preview').classList.add('hidden');
+                }
+                
+                document.getElementById('page-modal').classList.remove('hidden');
+                
+                // Animate modal
+                anime({
+                    targets: '#page-modal .bg-white',
+                    scale: [0.8, 1],
+                    opacity: [0, 1],
+                    duration: 300,
+                    easing: 'easeOutQuad'
+                });
+            }
+        }
+
+        function closePageModal() {
+            document.getElementById('page-modal').classList.add('hidden');
+            currentEditId = null;
+        }
+
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    document.getElementById('preview-image').src = e.target.result;
+                    document.getElementById('featured-image-preview').classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function handlePageSubmit(event) {
+            event.preventDefault();
+            
+            const pageData = {
+                title: document.getElementById('page-title').value,
+                slug: document.getElementById('page-slug').value,
+                content: document.getElementById('page-content').value,
+                metaDescription: document.getElementById('page-meta-description').value,
+                status: document.getElementById('page-status').value,
+                template: document.getElementById('page-template').value,
+                order: parseInt(document.getElementById('page-order').value),
+                inMenu: document.getElementById('page-in-menu').checked,
+                inFooter: document.getElementById('page-in-footer').checked,
+                featuredImage: document.getElementById('preview-image').src || '',
+                updatedAt: new Date().toISOString().split('T')[0]
+            };
+            
+            if (currentEditId) {
+                // Update existing page
+                const index = pages.findIndex(p => p.id === currentEditId);
+                if (index !== -1) {
+                    pages[index] = { ...pages[index], ...pageData };
+                }
+            } else {
+                // Add new page
+                const newPage = {
+                    id: 'page_' + Date.now(),
+                    ...pageData,
+                    createdAt: new Date().toISOString().split('T')[0]
+                };
+                pages.push(newPage);
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('customPages', JSON.stringify(pages));
+            
+            loadPages();
+            closePageModal();
+            showNotification(currentEditId ? 'Page updated successfully!' : 'Page created successfully!', 'success');
+        }
+
+        function previewPage(pageId = null) {
+            if (pageId) {
+                const page = pages.find(p => p.id === pageId);
+                if (page) {
+                    // In a real implementation, this would open the page in a new tab
+                    showNotification(`Preview: /pages/${page.slug}`, 'info');
+                }
+            } else {
+                // Preview current form content
+                showNotification('Preview feature coming soon!', 'info');
+            }
+        }
+
+        function showDeleteModal(pageId) {
+            deletePageId = pageId;
+            document.getElementById('delete-modal').classList.remove('hidden');
+            
+            // Animate modal
+            anime({
+                targets: '#delete-modal .bg-white',
+                scale: [0.8, 1],
+                opacity: [0, 1],
+                duration: 300,
+                easing: 'easeOutQuad'
+            });
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('delete-modal').classList.add('hidden');
+            deletePageId = null;
+        }
+
+        function confirmDelete() {
+            if (deletePageId) {
+                pages = pages.filter(p => p.id !== deletePageId);
+                localStorage.setItem('customPages', JSON.stringify(pages));
+                loadPages();
+                closeDeleteModal();
+                showNotification('Page deleted successfully!', 'success');
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('adminLoggedIn');
+            window.location.href = 'index.html';
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-20 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm ${getNotificationClass(type)}`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            anime({
+                targets: notification,
+                opacity: [0, 1],
+                translateX: [100, 0],
+                duration: 300,
+                easing: 'easeOutQuad'
+            });
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                anime({
+                    targets: notification,
+                    opacity: [1, 0],
+                    translateX: [0, 100],
+                    duration: 300,
+                    easing: 'easeInQuad',
+                    complete: () => {
+                        if (document.body.contains(notification)) {
+                            document.body.removeChild(notification);
+                        }
+                    }
+                });
+            }, 3000);
+        }
+
+        function getNotificationClass(type) {
+            switch (type) {
+                case 'success':
+                    return 'bg-green-500 text-white';
+                case 'warning':
+                    return 'bg-yellow-500 text-white';
+                case 'error':
+                    return 'bg-red-500 text-white';
+                default:
+                    return 'bg-blue-500 text-white';
+            }
+        }
+
+        // Auto-generate slug from title
+        document.getElementById('page-title').addEventListener('input', function() {
+            const title = this.value;
+            const slug = title.toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-|-$/g, '');
+            
+            if (!currentEditId || !document.getElementById('page-slug').value) {
+                document.getElementById('page-slug').value = slug;
+            }
+        });
+    </script>

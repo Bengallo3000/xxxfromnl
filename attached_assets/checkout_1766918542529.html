@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Checkout - fromNL.Top</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1a472a;
+            --secondary-color: #d4af37;
+            --accent-color: #ffffff;
+            --text-color: #2d3748;
+            --bg-color: #f8f9fa;
+        }
+        
+        body { 
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+        
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .gradient-text { 
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+        }
+        
+        .payment-card { 
+            transition: all 0.3s ease; 
+            background: var(--accent-color);
+        }
+        
+        .payment-card:hover { 
+            transform: translateY(-4px); 
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); 
+        }
+        
+        .payment-card.selected { 
+            border-color: var(--primary-color); 
+            background: rgba(26, 71, 42, 0.05); 
+        }
+        
+        .qr-container { 
+            background: #f8fafc; 
+            border: 2px dashed #cbd5e1; 
+        }
+        
+        .step-indicator { 
+            transition: all 0.3s ease; 
+        }
+        
+        .step-indicator.active { 
+            background: var(--primary-color); 
+            color: white; 
+        }
+        
+        .step-indicator.completed { 
+            background: #10b981; 
+            color: white; 
+        }
+        
+        .glow-effect { 
+            box-shadow: 0 0 20px rgba(26, 71, 42, 0.3); 
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-bold gradient-text">fromNL.Top</h1>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="text-gray-700 hover:text-green-600 transition-colors">Continue Shopping</a>
+                    <button onclick="showSupport()" class="text-gray-700 hover:text-green-600 transition-colors">Support</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Checkout Header -->
+    <div class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="text-center">
+                <h2 class="text-3xl font-bold text-gray-900 mb-2">Secure Crypto Checkout</h2>
+                <p class="text-gray-600">Complete your purchase with cryptocurrency</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Steps -->
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="flex items-center justify-center space-x-8 mb-12">
+            <div class="flex items-center">
+                <div id="step-1" class="step-indicator active w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-sm font-medium">1</div>
+                <span class="ml-2 text-sm font-medium text-gray-900">Order Review</span>
+            </div>
+            <div class="w-16 h-1 bg-gray-200"></div>
+            <div class="flex items-center">
+                <div id="step-2" class="step-indicator w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-sm font-medium">2</div>
+                <span class="ml-2 text-sm font-medium text-gray-900">Payment</span>
+            </div>
+            <div class="w-16 h-1 bg-gray-200"></div>
+            <div class="flex items-center">
+                <div id="step-3" class="step-indicator w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-sm font-medium">3</div>
+                <span class="ml-2 text-sm font-medium text-gray-900">Confirmation</span>
+            </div>
+        </div>
+
+        <!-- Step 1: Order Review -->
+        <div id="checkout-step-1" class="checkout-step">
+            <div class="grid lg:grid-cols-3 gap-8">
+                <!-- Order Summary -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-lg shadow p-6 mb-6">
+                        <h3 class="text-lg font-semibold mb-4">Order Summary</h3>
+                        <div id="order-items" class="space-y-4">
+                            <!-- Order items will be loaded here -->
+                        </div>
+                    </div>
+
+                    <!-- Shipping Information -->
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <h3 class="text-lg font-semibold mb-4">Shipping Information</h3>
+                        <form id="shipping-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                                <input type="text" id="shipping-name" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                                <input type="email" id="shipping-email" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Address</label>
+                                <input type="text" id="shipping-address" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">City</label>
+                                <input type="text" id="shipping-city" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">ZIP Code</label>
+                                <input type="text" id="shipping-zip" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Order Total -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white rounded-lg shadow p-6 sticky top-6">
+                        <h3 class="text-lg font-semibold mb-4">Order Total</h3>
+                        <div class="space-y-2 mb-4">
+                            <div class="flex justify-between">
+                                <span>Subtotal:</span>
+                                <span id="subtotal">€0.00</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Shipping:</span>
+                                <span id="shipping-cost">€9.99</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Tax:</span>
+                                <span id="tax-amount">€0.00</span>
+                            </div>
+                            <hr class="my-2">
+                            <div class="flex justify-between text-lg font-semibold">
+                                <span>Total:</span>
+                                <span id="total-amount" class="text-green-600">€0.00</span>
+                            </div>
+                        </div>
+                        <button onclick="proceedToPayment()" class="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition-colors glow-effect">
+                            Proceed to Payment
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 2: Payment -->
+        <div id="checkout-step-2" class="checkout-step hidden">
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-white rounded-lg shadow p-6 mb-6">
+                    <h3 class="text-lg font-semibold mb-6">Select Cryptocurrency</h3>
+                    <div class="grid md:grid-cols-3 gap-4 mb-8">
+                        <div class="payment-card border-2 border-gray-200 rounded-lg p-4 cursor-pointer" onclick="selectCrypto('BTC')">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold mr-3">₿</div>
+                                    <div>
+                                        <h4 class="font-semibold">Bitcoin</h4>
+                                        <p class="text-sm text-gray-600">BTC</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-sm text-gray-600">≈ 0.0023 BTC</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="payment-card border-2 border-gray-200 rounded-lg p-4 cursor-pointer" onclick="selectCrypto('ETH')">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold mr-3">Ξ</div>
+                                    <div>
+                                        <h4 class="font-semibold">Ethereum</h4>
+                                        <p class="text-sm text-gray-600">ETH</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-sm text-gray-600">≈ 0.15 ETH</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="payment-card border-2 border-gray-200 rounded-lg p-4 cursor-pointer" onclick="selectCrypto('XMR')">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-white font-bold mr-3">ɱ</div>
+                                    <div>
+                                        <h4 class="font-semibold">Monero</h4>
+                                        <p class="text-sm text-gray-600">XMR</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-sm text-gray-600">≈ 2.1 XMR</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="payment-card border-2 border-gray-200 rounded-lg p-4 cursor-pointer" onclick="selectCrypto('LTC')">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 bg-gray-400 rounded-full flex items-center justify-center text-white font-bold mr-3">Ł</div>
+                                    <div>
+                                        <h4 class="font-semibold">Litecoin</h4>
+                                        <p class="text-sm text-gray-600">LTC</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-sm text-gray-600">≈ 1.2 LTC</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="payment-card border-2 border-gray-200 rounded-lg p-4 cursor-pointer" onclick="selectCrypto('TRX')">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center text-white font-bold mr-3">T</div>
+                                    <div>
+                                        <h4 class="font-semibold">Tron</h4>
+                                        <p class="text-sm text-gray-600">TRX</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-sm text-gray-600">≈ 850 TRX</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="payment-details" class="hidden">
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-6">
+                            <h4 class="font-semibold mb-4">Payment Details</h4>
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <p class="text-sm text-gray-600 mb-2">Send exactly:</p>
+                                    <div class="bg-white p-3 rounded border font-mono text-lg" id="crypto-amount">0.0023 BTC</div>
+                                    <p class="text-xs text-gray-500 mt-1">Amount expires in <span id="countdown">15:00</span></p>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-600 mb-2">To this address:</p>
+                                    <div class="bg-white p-3 rounded border font-mono text-sm break-all" id="crypto-address">1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</div>
+                                    <button onclick="copyAddress()" class="mt-2 text-green-600 hover:text-green-800 text-sm">Copy Address</button>
+                                </div>
+                            </div>
+                            <div class="mt-6">
+                                <p class="text-sm text-gray-600 mb-2">Or scan QR code:</p>
+                                <div class="qr-container w-32 h-32 flex items-center justify-center">
+                                    <div class="text-center">
+                                        <div class="w-20 h-20 bg-gray-300 rounded flex items-center justify-center mb-2">
+                                            <svg class="w-10 h-10 text-gray-500" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm18 0h-2v2h2v-2zm-2 2h2v2h-2v-2zm2 2h2v2h-2v-2z"/>
+                                            </svg>
+                                        </div>
+                                        <p class="text-xs text-gray-500">QR Code</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 text-center">
+                            <button onclick="confirmPayment()" class="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition-colors glow-effect">
+                                I've Made the Payment
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 3: Confirmation -->
+        <div id="checkout-step-3" class="checkout-step hidden">
+            <div class="max-w-2xl mx-auto text-center">
+                <div class="bg-white rounded-lg shadow p-8">
+                    <div class="mb-6">
+                        <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-2">Payment Confirmed!</h3>
+                        <p class="text-gray-600">Thank you for your order. Your payment has been successfully processed.</p>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg p-6 mb-6">
+                        <h4 class="font-semibold mb-4">Order Details</h4>
+                        <div class="space-y-2 text-left">
+                            <div class="flex justify-between">
+                                <span>Order ID:</span>
+                                <span class="mono" id="order-id">ORD-2025-001</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Transaction ID:</span>
+                                <span class="mono" id="transaction-id">TX-ABC123XYZ</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Payment Method:</span>
+                                <span id="payment-method">Bitcoin</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Total Amount:</span>
+                                <span id="confirmed-total">€175.00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <p class="text-sm text-gray-600">
+                            You will receive a confirmation email shortly with tracking information.
+                        </p>
+                        <p class="text-sm text-gray-600">
+                            Your order will be processed and shipped within 24-48 hours.
+                        </p>
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                            <button onclick="continueShopping()" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors glow-effect">
+                                Continue Shopping
+                            </button>
+                            <button onclick="trackOrder()" class="border border-gray-300 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-50 transition-colors">
+                                Track Order
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Checkout state
+        let currentStep = 1;
+        let selectedCrypto = null;
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let countdownTimer = null;
+
+        // Crypto addresses (mock data)
+        const cryptoAddresses = {
+            'BTC': '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
+            'ETH': '0x742d35Cc6634C0532925a3b844Bc9e7595f',
+            'XMR': '47xZ1L7Bx3sRdQBqyH6Z9P1P6WkR6N6W1H6kQ9T8Y7U6'
+        };
+
+        // Initialize checkout
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check age verification
+            if (!localStorage.getItem('ageVerified')) {
+                alert('Age verification required. Redirecting to store...');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            loadOrderSummary();
+        });
+
+        function loadOrderSummary() {
+            const orderItems = document.getElementById('order-items');
+            const subtotalEl = document.getElementById('subtotal');
+            const taxEl = document.getElementById('tax-amount');
+            const totalEl = document.getElementById('total-amount');
+            const confirmedTotalEl = document.getElementById('confirmed-total');
+
+            if (cart.length === 0) {
+                orderItems.innerHTML = '<p class="text-gray-500">Your cart is empty</p>';
+                return;
+            }
+
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const shipping = 9.99;
+            const tax = subtotal * 0.21; // 21% VAT
+            const total = subtotal + shipping + tax;
+
+            orderItems.innerHTML = cart.map(item => `
+                <div class="flex items-center justify-between py-3 border-b">
+                    <div class="flex items-center">
+                        <img src="${getProductImage(item.id)}" alt="${item.name}" class="w-12 h-12 rounded-lg object-cover mr-3">
+                        <div>
+                            <h4 class="font-medium">${item.name}</h4>
+                            <p class="text-sm text-gray-600">Quantity: ${item.quantity}</p>
+                        </div>
+                    </div>
+                    <span class="font-semibold">€${(item.price * item.quantity).toFixed(2)}</span>
+                </div>
+            `).join('');
+
+            subtotalEl.textContent = `€${subtotal.toFixed(2)}`;
+            taxEl.textContent = `€${tax.toFixed(2)}`;
+            totalEl.textContent = `€${total.toFixed(2)}`;
+            confirmedTotalEl.textContent = `€${total.toFixed(2)}`;
+        }
+
+        function getProductImage(productId) {
+            // Mock function to get product image
+            const images = {
+                'amnesia-haze': 'https://kimi-web-img.moonshot.cn/img/aqualitas.ca/b57773059391e8fa20808adbd0ca94686e6d056d.jpg',
+                'white-widow': 'https://kimi-web-img.moonshot.cn/img/images.squarespace-cdn.com/eab635a2928af76cceb4120c00b92b8944ef3d84',
+                'shatter-gold': 'https://kimi-web-img.moonshot.cn/img/img.freepik.com/12410afc73de48b882393e0709860ecfeefc0c49.jpg',
+                'chocolate-brownies': 'https://kimi-web-img.moonshot.cn/img/whyy.org/8b9306a932f6f80e865c772fca12be65579d0a3f.jpg'
+            };
+            return images[productId] || 'https://via.placeholder.com/48';
+        }
+
+        function proceedToPayment() {
+            // Validate shipping form
+            const form = document.getElementById('shipping-form');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            // Update step indicators
+            document.getElementById('step-1').classList.remove('active');
+            document.getElementById('step-1').classList.add('completed');
+            document.getElementById('step-2').classList.add('active');
+
+            // Show payment step
+            document.getElementById('checkout-step-1').classList.add('hidden');
+            document.getElementById('checkout-step-2').classList.remove('hidden');
+
+            currentStep = 2;
+        }
+
+        function selectCrypto(crypto) {
+            selectedCrypto = crypto;
+            
+            // Update UI
+            document.querySelectorAll('.payment-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.target.closest('.payment-card').classList.add('selected');
+
+            // Show payment details
+            const paymentDetails = document.getElementById('payment-details');
+            paymentDetails.classList.remove('hidden');
+
+            // Update crypto amount and address
+            const total = 175.00; // This should be calculated from cart
+            const cryptoAmount = getCryptoAmount(crypto, total);
+            document.getElementById('crypto-amount').textContent = `${cryptoAmount} ${crypto}`;
+            document.getElementById('crypto-address').textContent = cryptoAddresses[crypto];
+
+            // Start countdown
+            startCountdown();
+
+            // Animate payment details
+            anime({
+                targets: '#payment-details',
+                opacity: [0, 1],
+                translateY: [20, 0],
+                duration: 500,
+                easing: 'easeOutQuad'
+            });
+        }
+
+        function getCryptoAmount(crypto, eurAmount) {
+            // Mock conversion rates
+            const rates = {
+                'BTC': 38000,
+                'ETH': 2400,
+                'XMR': 180
+            };
+            return (eurAmount / rates[crypto]).toFixed(6);
+        }
+
+        function startCountdown() {
+            let timeLeft = 15 * 60; // 15 minutes in seconds
+            const countdownEl = document.getElementById('countdown');
+
+            countdownTimer = setInterval(() => {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                countdownEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+                if (timeLeft <= 0) {
+                    clearInterval(countdownTimer);
+                    alert('Payment session expired. Please start over.');
+                    window.location.href = 'index.html';
+                }
+
+                timeLeft--;
+            }, 1000);
+        }
+
+        function copyAddress() {
+            const address = document.getElementById('crypto-address').textContent;
+            navigator.clipboard.writeText(address).then(() => {
+                showNotification('Address copied to clipboard!', 'success');
+            });
+        }
+
+        function confirmPayment() {
+            if (!selectedCrypto) {
+                showNotification('Please select a cryptocurrency first', 'warning');
+                return;
+            }
+
+            // Simulate payment confirmation
+            showPaymentProcessing();
+            
+            setTimeout(() => {
+                // Update step indicators
+                document.getElementById('step-2').classList.remove('active');
+                document.getElementById('step-2').classList.add('completed');
+                document.getElementById('step-3').classList.add('active');
+
+                // Show confirmation step
+                document.getElementById('checkout-step-2').classList.add('hidden');
+                document.getElementById('checkout-step-3').classList.remove('hidden');
+
+                // Update order details
+                document.getElementById('payment-method').textContent = selectedCrypto;
+                document.getElementById('order-id').textContent = 'ORD-' + Date.now();
+                document.getElementById('transaction-id').textContent = 'TX-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+
+                currentStep = 3;
+                clearInterval(countdownTimer);
+
+                // Clear cart
+                localStorage.removeItem('cart');
+
+                // Animate success
+                anime({
+                    targets: '#checkout-step-3 .bg-white',
+                    scale: [0.9, 1],
+                    opacity: [0, 1],
+                    duration: 600,
+                    easing: 'easeOutQuad'
+                });
+            }, 3000);
+        }
+
+        function showPaymentProcessing() {
+            const notification = document.createElement('div');
+            notification.className = 'fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center';
+            notification.innerHTML = `
+                <div class="bg-white rounded-lg p-8 text-center">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-green-600 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">Processing Payment</h3>
+                    <p class="text-gray-600">Please wait while we confirm your transaction...</p>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 3000);
+        }
+
+        function continueShopping() {
+            window.location.href = 'index.html';
+        }
+
+        function trackOrder() {
+            showNotification('Order tracking feature coming soon!', 'info');
+        }
+
+        function showSupport() {
+            showNotification('Contact support at support@fromnl.top or @fromNLSupport on Telegram', 'info');
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-20 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm ${getNotificationClass(type)}`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            anime({
+                targets: notification,
+                opacity: [0, 1],
+                translateX: [100, 0],
+                duration: 300,
+                easing: 'easeOutQuad'
+            });
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                anime({
+                    targets: notification,
+                    opacity: [1, 0],
+                    translateX: [0, 100],
+                    duration: 300,
+                    easing: 'easeInQuad',
+                    complete: () => {
+                        if (document.body.contains(notification)) {
+                            document.body.removeChild(notification);
+                        }
+                    }
+                });
+            }, 3000);
+        }
+
+        function getNotificationClass(type) {
+            switch (type) {
+                case 'success':
+                    return 'bg-green-500 text-white';
+                case 'warning':
+                    return 'bg-yellow-500 text-white';
+                case 'error':
+                    return 'bg-red-500 text-white';
+                default:
+                    return 'bg-blue-500 text-white';
+            }
+        }
+
+        // Handle page refresh during checkout
+        window.addEventListener('beforeunload', function(e) {
+            if (currentStep === 2 && selectedCrypto) {
+                e.preventDefault();
+                e.returnValue = 'Your payment session will be lost. Are you sure you want to leave?';
+            }
+        });
+    </script>
+</body>
+</html>

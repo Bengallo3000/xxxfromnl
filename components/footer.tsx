@@ -1,89 +1,109 @@
+"use client"
+
 import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { MapPin, Send, Mail } from "lucide-react"
 
 export function Footer() {
+  const pathname = usePathname()
+
+  if (pathname === "/admin") {
+    return null
+  }
+
   return (
-    <footer className="border-t border-primary/30 bg-background/50 backdrop-blur">
-      <div className="absolute bottom-0 left-0 right-0 h-1 dutch-stripe" />
+    <footer className="border-t border-border bg-card/50">
       <div className="container mx-auto px-4 py-12">
         <div className="grid md:grid-cols-4 gap-8 mb-8">
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-dutch-orange to-dutch-red flex items-center justify-center font-bold text-white text-sm">
-                NL
-              </div>
-              <span className="font-bold">
-                <span className="text-dutch-orange">From</span>
-                <span className="text-dutch-blue">NL</span>
-                <span className="text-muted-foreground">.pro</span>
-              </span>
+              <span className="text-lg font-bold text-white">From</span>
+              <span className="text-lg font-bold bg-gradient-to-b from-[#D64545] via-white to-[#1E4C8E] bg-clip-text text-transparent">NL</span>
+              <span className="text-xs text-primary">.pro</span>
             </div>
-            <p className="text-sm text-muted-foreground">
-              Premium Dutch quality products. Direct from the Netherlands.
+            <p className="text-sm text-muted-foreground mb-4">
+              Best Dutch Premium Quality. Direct from the Netherlands.
             </p>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <MapPin className="w-4 h-4 text-primary" />
+              <span>Netherlands, EU</span>
+            </div>
           </div>
 
           <div>
-            <h3 className="font-semibold mb-4">Shop</h3>
+            <h3 className="font-semibold mb-4 flex items-center gap-2">
+              <span className="text-primary">»</span> Navigation
+            </h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/products" className="text-muted-foreground hover:text-dutch-orange transition-colors">
-                  All Products
+                <Link href="/" className="text-muted-foreground hover:text-primary transition-colors">
+                  Home
                 </Link>
               </li>
               <li>
-                <Link href="/products" className="text-muted-foreground hover:text-dutch-orange transition-colors">
+                <Link href="/products" className="text-muted-foreground hover:text-primary transition-colors">
+                  Products
+                </Link>
+              </li>
+              <li>
+                <Link href="/products" className="text-muted-foreground hover:text-primary transition-colors">
                   Premium
-                </Link>
-              </li>
-              <li>
-                <Link href="/products" className="text-muted-foreground hover:text-dutch-orange transition-colors">
-                  Standard
                 </Link>
               </li>
             </ul>
           </div>
 
           <div>
-            <h3 className="font-semibold mb-4">Company</h3>
+            <h3 className="font-semibold mb-4 flex items-center gap-2">
+              <span className="text-primary">»</span> Support
+            </h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/about" className="text-muted-foreground hover:text-dutch-orange transition-colors">
-                  About Us
+                <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                  FAQ
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-muted-foreground hover:text-dutch-orange transition-colors">
+                <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
                   Contact
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-muted-foreground hover:text-dutch-orange transition-colors">
-                  FAQ
+                <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                  Shipping
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                  Returns
                 </Link>
               </li>
             </ul>
           </div>
 
           <div>
-            <h3 className="font-semibold mb-4">Languages</h3>
-            <ul className="space-y-2 text-sm">
+            <h3 className="font-semibold mb-4 flex items-center gap-2">
+              <span className="text-primary">»</span> Contact Us
+            </h3>
+            <ul className="space-y-3 text-sm">
               <li>
-                <button className="text-muted-foreground hover:text-dutch-orange transition-colors">🇩🇪 Deutsch</button>
+                <a href="#" className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
+                  <Send className="w-4 h-4" />
+                  Telegram
+                </a>
               </li>
               <li>
-                <button className="text-muted-foreground hover:text-dutch-orange transition-colors">🇬🇧 English</button>
-              </li>
-              <li>
-                <button className="text-muted-foreground hover:text-dutch-orange transition-colors">
-                  🇳🇱 Nederlands
-                </button>
+                <a href="mailto:support@fromnl.pro" className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
+                  <Mail className="w-4 h-4" />
+                  Email Support
+                </a>
               </li>
             </ul>
           </div>
         </div>
 
         <div className="pt-8 border-t border-border text-center text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} FromNL.pro. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} FromNL.pro | All rights reserved</p>
         </div>
       </div>
     </footer>

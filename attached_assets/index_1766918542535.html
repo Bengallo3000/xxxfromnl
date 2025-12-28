@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>fromNL.Top - Premium Products from the Netherlands</title>
+    <meta name="description" content="Premium cannabis and botanical products from the Netherlands. Quality strains, concentrates, edibles, and magic mushrooms with discreet worldwide shipping.">
+    <meta name="keywords" content="cannabis, marijuana, weed, concentrates, edibles, magic mushrooms, psilocybin, Netherlands, premium quality, discreet shipping">
+    <meta name="author" content="fromNL.Top">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="fromNL.Top - Premium Products from the Netherlands">
+    <meta property="og:description" content="Premium cannabis and botanical products from the Netherlands with discreet worldwide shipping.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://fromnl.top">
+    <meta property="og:image" content="resources/hero-fromnl.jpg">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="fromNL.Top - Premium Products from the Netherlands">
+    <meta name="twitter:description" content="Premium cannabis and botanical products from the Netherlands with discreet worldwide shipping.">
+    <meta name="twitter:image" content="resources/hero-fromnl.jpg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.12/typed.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+    <script src="https://unpkg.com/splitting@1.0.6/dist/splitting.js"></script>
+    <link href="https://unpkg.com/splitting@1.0.6/dist/splitting.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1a472a;
+            --secondary-color: #d4af37;
+            --accent-color: #ffffff;
+            --text-color: #2d3748;
+            --bg-color: #f8f9fa;
+        }
+        
+        body { 
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+        
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .gradient-text { 
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+        }
+        
+        .hero-bg { 
+            background: linear-gradient(135deg, var(--primary-color) 0%, #2d5a3a 100%); 
+        }
+        
+        .product-card { 
+            transition: all 0.3s ease; 
+            background: var(--accent-color);
+        }
+        
+        .product-card:hover { 
+            transform: translateY(-8px) rotateX(5deg); 
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); 
+        }
+        
+        .cart-slide { 
+            transform: translateX(100%); 
+            transition: transform 0.3s ease; 
+        }
+        
+        .cart-slide.open { 
+            transform: translateX(0); 
+        }
+        
+        .glow-effect { 
+            box-shadow: 0 0 20px rgba(26, 71, 42, 0.3); 
+        }
+        
+        .theme-dark {
+            --primary-color: #d4af37;
+            --secondary-color: #1a472a;
+            --accent-color: #1a1a1a;
+            --text-color: #ffffff;
+            --bg-color: #0f0f0f;
+        }
+        
+        .filter-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .age-verification {
+            backdrop-filter: blur(10px);
+            background: rgba(0, 0, 0, 0.9);
+        }
+        
+        .telegram-float {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        
+        .splitting .char {
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Age Verification Modal -->
+    <div id="age-verification" class="fixed inset-0 z-50 age-verification flex items-center justify-center">
+        <div class="bg-white rounded-lg shadow-2xl p-8 max-w-md w-full mx-4">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold gradient-text mb-2">fromNL.Top</h2>
+                <p class="text-gray-600">Age Verification Required</p>
+            </div>
+            
+            <div class="mb-6">
+                <p class="text-center text-gray-700 mb-4">You must be 18+ to enter this website</p>
+                <p class="text-sm text-gray-500 text-center">Please verify your age to continue</p>
+            </div>
+            
+            <div class="flex space-x-4">
+                <button onclick="verifyAge(false)" class="flex-1 bg-gray-300 text-gray-700 py-3 rounded-lg hover:bg-gray-400 transition-colors">
+                    I'm Under 18
+                </button>
+                <button onclick="verifyAge(true)" class="flex-1 bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition-colors">
+                    I'm 18+
+                </button>
+            </div>
+            
+            <p class="text-xs text-gray-400 text-center mt-4">
+                By entering, you agree to our terms and conditions
+            </p>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-40 bg-white/90 backdrop-blur-md border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-bold gradient-text">fromNL.Top</h1>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="#products" class="text-gray-700 hover:text-green-600 transition-colors">Products</a>
+                    <a href="admin.html" class="text-gray-700 hover:text-green-600 transition-colors">Admin</a>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="toggleTheme()" class="p-2 text-gray-700 hover:text-green-600 transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                            </svg>
+                        </button>
+                        <select id="currency-selector" class="text-sm border-0 bg-transparent">
+                            <option value="EUR">EUR (€)</option>
+                            <option value="USD">USD ($)</option>
+                            <option value="BTC">BTC (₿)</option>
+                        </select>
+                    </div>
+                    <button id="cart-toggle" class="relative p-2 text-gray-700 hover:text-green-600 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5 6m0 0h9m-9 0V19a2 2 0 002 2h7a2 2 0 002-2v-4"></path>
+                        </svg>
+                        <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                    </button>
+                </div>
+
+                <div class="md:hidden">
+                    <button id="mobile-menu-toggle" class="text-gray-700">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-bg pt-24 pb-16 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h2 class="text-5xl font-bold mb-6">
+                        Premium Products <br>
+                        <span id="typed-text" class="gradient-text"></span>
+                    </h2>
+                    <p class="text-xl text-gray-200 mb-8">
+                        Discover the finest selection of premium products from the Netherlands. 
+                        Quality, discretion, and excellence in every order.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <button onclick="scrollToProducts()" class="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition-colors glow-effect">
+                            Shop Now
+                        </button>
+                        <button onclick="openCart()" class="border border-white text-white px-8 py-3 rounded-lg hover:bg-white hover:text-gray-900 transition-colors">
+                            View Cart
+                        </button>
+                    </div>
+                </div>
+                <div class="relative">
+                    <img src="resources/hero-fromnl.jpg" alt="Premium Products from NL" class="rounded-lg shadow-2xl w-full h-auto">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-lg"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Categories -->
+    <section class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold mb-4" data-splitting>Product Categories</h3>
+                <p class="text-gray-600">Explore our premium selection</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="category-card bg-gray-50 rounded-lg p-6 text-center hover:bg-green-50 transition-colors cursor-pointer" onclick="filterProducts('flowers')">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                        </svg>
+                    </div>
+                    <h4 class="text-lg font-semibold mb-2">Premium Flowers</h4>
+                    <p class="text-gray-600 text-sm">Top-quality cannabis strains</p>
+                </div>
+                
+                <div class="category-card bg-gray-50 rounded-lg p-6 text-center hover:bg-green-50 transition-colors cursor-pointer" onclick="filterProducts('concentrates')">
+                    <div class="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <h4 class="text-lg font-semibold mb-2">Concentrates</h4>
+                    <p class="text-gray-600 text-sm">Shatter, wax, and extracts</p>
+                </div>
+                
+                <div class="category-card bg-gray-50 rounded-lg p-6 text-center hover:bg-green-50 transition-colors cursor-pointer" onclick="filterProducts('edibles')">
+                    <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"></path>
+                        </svg>
+                    </div>
+                    <h4 class="text-lg font-semibold mb-2">Edibles</h4>
+                    <p class="text-gray-600 text-sm">Chocolates, gummies, and more</p>
+                </div>
+                
+                <div class="category-card bg-gray-50 rounded-lg p-6 text-center hover:bg-green-50 transition-colors cursor-pointer" onclick="filterProducts('mushrooms')">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                        </svg>
+                    </div>
+                    <h4 class="text-lg font-semibold mb-2">Magic Mushrooms</h4>
+                    <p class="text-gray-600 text-sm">Premium psilocybin varieties</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Filters -->
+    <section id="products" class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col lg:flex-row gap-8">
+                <!-- Filters Sidebar -->
+                <div class="lg:w-1/4">
+                    <div class="bg-white rounded-lg shadow p-6 sticky top-24">
+                        <h3 class="text-lg font-semibold mb-4">Filters</h3>
+                        
+                        <!-- Category Filter -->
+                        <div class="mb-6">
+                            <h4 class="font-medium mb-3">Category</h4>
+                            <div class="space-y-2">
+                                <button onclick="filterProducts('all')" class="filter-btn active w-full text-left px-3 py-2 rounded-lg text-sm transition-colors">All Products</button>
+                                <button onclick="filterProducts('flowers')" class="filter-btn w-full text-left px-3 py-2 rounded-lg text-sm transition-colors hover:bg-gray-100">Premium Flowers</button>
+                                <button onclick="filterProducts('concentrates')" class="filter-btn w-full text-left px-3 py-2 rounded-lg text-sm transition-colors hover:bg-gray-100">Concentrates</button>
+                                <button onclick="filterProducts('edibles')" class="filter-btn w-full text-left px-3 py-2 rounded-lg text-sm transition-colors hover:bg-gray-100">Edibles</button>
+                                <button onclick="filterProducts('mushrooms')" class="filter-btn w-full text-left px-3 py-2 rounded-lg text-sm transition-colors hover:bg-gray-100">Magic Mushrooms</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Price Range -->
+                        <div class="mb-6">
+                            <h4 class="font-medium mb-3">Price Range</h4>
+                            <div class="space-y-2">
+                                <button onclick="filterByPrice('all')" class="price-filter w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-gray-100">All Prices</button>
+                                <button onclick="filterByPrice('0-25')" class="price-filter w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-gray-100">€0 - €25</button>
+                                <button onclick="filterByPrice('25-50')" class="price-filter w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-gray-100">€25 - €50</button>
+                                <button onclick="filterByPrice('50-100')" class="price-filter w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-gray-100">€50 - €100</button>
+                                <button onclick="filterByPrice('100+')" class="price-filter w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-gray-100">€100+</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Potency -->
+                        <div class="mb-6">
+                            <h4 class="font-medium mb-3">Potency</h4>
+                            <div class="space-y-2">
+                                <button onclick="filterByPotency('all')" class="potency-filter w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-gray-100">All Potency</button>
+                                <button onclick="filterByPotency('low')" class="potency-filter w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-gray-100">Low (0-15%)</button>
+                                <button onclick="filterByPotency('medium')" class="potency-filter w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-gray-100">Medium (15-25%)</button>
+                                <button onclick="filterByPotency('high')" class="potency-filter w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-gray-100">High (25%+)</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Products Grid -->
+                <div class="lg:w-3/4">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h3 class="text-2xl font-bold">Our Products</h3>
+                            <p class="text-gray-600" id="product-count">Loading products...</p>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <select id="sort-selector" class="border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                                <option value="name">Sort by Name</option>
+                                <option value="price-low">Price: Low to High</option>
+                                <option value="price-high">Price: High to Low</option>
+                                <option value="potency">Potency</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div id="product-grid" class="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+                        <!-- Products will be dynamically loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Shopping Cart Sidebar -->
+    <div id="cart-sidebar" class="fixed right-0 top-0 h-full w-96 bg-white shadow-2xl z-50 cart-slide">
+        <div class="p-6 border-b">
+            <div class="flex justify-between items-center">
+                <h3 class="text-xl font-bold">Shopping Cart</h3>
+                <button onclick="closeCart()" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <div id="cart-items" class="flex-1 overflow-y-auto p-6">
+            <div id="empty-cart" class="text-center py-12">
+                <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5 6m0 0h9m-9 0V19a2 2 0 002 2h7a2 2 0 002-2v-4"></path>
+                </svg>
+                <p class="text-gray-500">Your cart is empty</p>
+            </div>
+        </div>
+        
+        <div id="cart-footer" class="p-6 border-t bg-gray-50">
+            <div class="flex justify-between items-center mb-4">
+                <span class="text-lg font-semibold">Total:</span>
+                <span id="cart-total" class="text-2xl font-bold text-green-600">€0.00</span>
+            </div>
+            <button onclick="proceedToCheckout()" class="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition-colors glow-effect">
+                Proceed to Checkout
+            </button>
+        </div>
+    </div>
+
+    <!-- Cart Overlay -->
+    <div id="cart-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden" onclick="closeCart()"></div>
+
+    <!-- Telegram Support Button -->
+    <button id="telegram-btn" class="telegram-float bg-blue-500 text-white p-4 rounded-full shadow-lg hover:bg-blue-600 transition-colors">
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15.65l-3.35-3.35 1.41-1.41L11 14.17l5.59-5.59L18 10l-7 7.65z"/>
+        </svg>
+    </button>
+
+    <!-- Social Media Links -->
+    <div class="bg-gray-800 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h3 class="text-lg font-semibold text-white mb-4">Follow Us</h3>
+                <div class="flex justify-center space-x-6">
+                    <a href="https://t.me/fromNLSupport" target="_blank" class="text-gray-400 hover:text-white transition-colors">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15.65l-3.35-3.35 1.41-1.41L11 14.17l5.59-5.59L18 10l-7 7.65z"/>
+                        </svg>
+                    </a>
+                    <a href="https://instagram.com/fromnl.top" target="_blank" class="text-gray-400 hover:text-white transition-colors">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 6.62 5.367 11.987 11.988 11.987s11.987-5.367 11.987-11.987C24.014 5.367 18.647.001 12.017.001zm5.568 16.791c-.001.264-.106.52-.292.706-.187.187-.442.292-.706.292H7.456c-.264 0-.52-.105-.706-.292-.187-.186-.292-.442-.292-.706V7.544c0-.264.105-.52.292-.706.186-.187.442-.292.706-.292h9.131c.264 0 .52.105.706.292.187.186.292.442.292.706v9.247z"/>
+                        </svg>
+                    </a>
+                    <a href="https://twitter.com/fromnl_top" target="_blank" class="text-gray-400 hover:text-white transition-colors">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                        </svg>
+                    </a>
+                    <a href="mailto:support@fromnl.top" class="text-gray-400 hover:text-white transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="mb-8">
+                <h4 class="text-2xl font-bold gradient-text mb-4">fromNL.Top</h4>
+                <p class="text-gray-400">Premium products from the Netherlands</p>
+            </div>
+            <!-- Hidden admin access trigger -->
+            <div class="border-t border-gray-800 pt-8">
+                <p id="admin-trigger" class="text-gray-400 cursor-pointer hover:text-white transition-colors">&copy; 2025 fromNL.Top. All rights reserved.</p>
+                <div id="admin-login" class="hidden mt-4">
+                    <input type="password" id="admin-password-input" placeholder="Enter admin password" 
+                           class="px-4 py-2 bg-gray-800 border border-gray-600 rounded text-white">
+                    <button onclick="checkAdminAccess()" class="ml-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                        Access
+                    </button>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+</body>
+</html>

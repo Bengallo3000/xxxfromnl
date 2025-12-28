@@ -37,3 +37,8 @@ externalPort = 80
 deploymentTarget = "autoscale"
 run = ["pnpm", "start"]
 build = ["pnpm", "build"]
+
+[userenv]
+
+[userenv.development]
+NEXT_PUBLIC_ADMIN_PASSWORD = "demo123"

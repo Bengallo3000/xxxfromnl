@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Age Verification - fromNL.Top</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1a472a;
+            --secondary-color: #d4af37;
+            --accent-color: #ffffff;
+            --text-color: #2d3748;
+            --bg-color: #f8f9fa;
+        }
+        
+        body { 
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+        
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .gradient-text { 
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+        }
+        
+        .captcha-container {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 2px solid #dee2e6;
+        }
+        
+        .captcha-char {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: bold;
+            user-select: none;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            transform: rotate(var(--rotation)) scale(var(--scale));
+        }
+        
+        .matrix-bg {
+            background: linear-gradient(45deg, #000000, #001100);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .matrix-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        .glow-effect { 
+            box-shadow: 0 0 20px rgba(26, 71, 42, 0.3); 
+        }
+        
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Matrix Background -->
+    <canvas id="matrix-canvas" class="matrix-canvas"></canvas>
+
+    <!-- Main Container -->
+    <div class="min-h-screen flex items-center justify-center p-4 relative z-10">
+        <div class="max-w-md w-full">
+            <!-- Logo/Header -->
+            <div class="text-center mb-8">
+                <h1 class="text-4xl font-bold gradient-text mb-2">fromNL.Top</h1>
+                <p class="text-gray-600">Premium Products from Netherlands</p>
+            </div>
+
+            <!-- Captcha Card -->
+            <div class="bg-white rounded-lg shadow-2xl p-8">
+                <div class="text-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-2">Age Verification Required</h2>
+                    <p class="text-gray-600">You must be 18+ to enter this website</p>
+                </div>
+
+                <!-- Age Verification -->
+                <div class="mb-6">
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+                        <div class="flex items-center mb-2">
+                            <svg class="w-5 h-5 text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                            </svg>
+                            <span class="text-red-800 font-medium">Adults Only (18+)</span>
+                        </div>
+                        <p class="text-sm text-red-700">This website contains content suitable only for adults. Please verify your age to continue.</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <button onclick="verifyAge(false)" class="bg-gray-300 text-gray-700 py-3 rounded-lg hover:bg-gray-400 transition-colors font-medium">
+                            I'm Under 18
+                        </button>
+                        <button onclick="showCaptcha()" class="bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition-colors font-medium glow-effect">
+                            I'm 18+
+                        </button>
+                    </div>
+                </div>
+
+                <!-- CAPTCHA Section (Initially Hidden) -->
+                <div id="captcha-section" class="hidden">
+                    <div class="border-t pt-6">
+                        <h3 class="text-lg font-semibold text-center mb-4">Security Verification</h3>
+                        
+                        <!-- CAPTCHA Display -->
+                        <div class="captcha-container rounded-lg p-4 mb-4">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-sm font-medium text-gray-700">Enter the code below:</span>
+                                <button onclick="generateCaptcha()" class="text-sm text-green-600 hover:text-green-800">
+                                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                    </svg>
+                                    Refresh
+                                </button>
+                            </div>
+                            
+                            <div id="captcha-display" class="bg-white border-2 border-gray-300 rounded-lg p-4 text-center mb-4 h-20 flex items-center justify-center">
+                                <!-- CAPTCHA characters will be generated here -->
+                            </div>
+                            
+                            <input type="text" id="captcha-input" placeholder="Enter the code above" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-center font-mono text-lg">
+                        </div>
+                        
+                        <div class="flex items-center justify-between text-sm text-gray-600 mb-4">
+                            <label class="flex items-center">
+                                <input type="checkbox" id="remember-age" class="mr-2 h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
+                                Remember my age verification
+                            </label>
+                            <button onclick="showHelp()" class="text-green-600 hover:text-green-800">
+                                Need help?
+                            </button>
+                        </div>
+                        
+                        <button onclick="verifyCaptcha()" class="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition-colors font-medium glow-effect">
+                            Verify & Enter
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Terms -->
+                <div class="mt-6 text-xs text-gray-500 text-center">
+                    <p>By entering, you confirm you are 18+ and agree to our <a href="#" class="text-green-600 hover:text-green-800">Terms & Conditions</a></p>
+                </div>
+            </div>
+
+            <!-- Help Section (Initially Hidden) -->
+            <div id="help-section" class="bg-white rounded-lg shadow-2xl p-6 mt-4 hidden">
+                <h3 class="text-lg font-semibold mb-3">Verification Help</h3>
+                <div class="space-y-3 text-sm text-gray-600">
+                    <div class="flex items-start">
+                        <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span>Enter the characters exactly as shown, including case sensitivity</span>
+                    </div>
+                    <div class="flex items-start">
+                        <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span>Click the refresh button if the code is difficult to read</span>
+                    </div>
+                    <div class="flex items-start">
+                        <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span>Contact support if you continue to have issues</span>
+                    </div>
+                </div>
+                <button onclick="hideHelp()" class="mt-4 text-green-600 hover:text-green-800 text-sm">Close Help</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentCaptcha = '';
+        let matrixAnimation = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeMatrixEffect();
+            
+            // Check if already verified
+            if (localStorage.getItem('ageVerified') === 'true') {
+                window.location.href = 'index.html';
+            }
+        });
+
+        function initializeMatrixEffect() {
+            const canvas = document.getElementById('matrix-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Set canvas size
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            // Matrix characters
+            const matrix = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()_+-=[]{}|;:,.<>?";
+            const matrixArray = matrix.split("");
+            
+            const fontSize = 14;
+            const columns = canvas.width / fontSize;
+            const drops = [];
+            
+            // Initialize drops
+            for (let x = 0; x < columns; x++) {
+                drops[x] = 1;
+            }
+            
+            function drawMatrix() {
+                ctx.fillStyle = "rgba(0, 0, 0, 0.04)";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.fillStyle = "#00FF41";
+                ctx.font = fontSize + "px monospace";
+                
+                for (let i = 0; i < drops.length; i++) {
+                    const text = matrixArray[Math.floor(Math.random() * matrixArray.length)];
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                    
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
+            }
+            
+            matrixAnimation = setInterval(drawMatrix, 35);
+        }
+
+        function showCaptcha() {
+            document.getElementById('captcha-section').classList.remove('hidden');
+            generateCaptcha();
+            
+            // Animate captcha section
+            anime({
+                targets: '#captcha-section',
+                opacity: [0, 1],
+                translateY: [20, 0],
+                duration: 500,
+                easing: 'easeOutQuad'
+            });
+        }
+
+        function generateCaptcha() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let captcha = '';
+            
+            // Generate 6 random characters
+            for (let i = 0; i < 6; i++) {
+                captcha += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            
+            currentCaptcha = captcha;
+            displayCaptcha(captcha);
+            
+            // Clear input
+            document.getElementById('captcha-input').value = '';
+            document.getElementById('captcha-input').classList.remove('shake');
+        }
+
+        function displayCaptcha(captcha) {
+            const display = document.getElementById('captcha-display');
+            display.innerHTML = '';
+            
+            // Create individual character elements with random styling
+            for (let i = 0; i < captcha.length; i++) {
+                const span = document.createElement('span');
+                span.className = 'captcha-char';
+                span.textContent = captcha[i];
+                
+                // Random styling
+                const rotation = (Math.random() - 0.5) * 30; // -15 to 15 degrees
+                const scale = 0.8 + Math.random() * 0.4; // 0.8 to 1.2
+                const color = `hsl(${Math.random() * 60 + 120}, 70%, 40%)`; // Green-ish colors
+                
+                span.style.setProperty('--rotation', rotation + 'deg');
+                span.style.setProperty('--scale', scale);
+                span.style.color = color;
+                span.style.fontSize = (20 + Math.random() * 10) + 'px';
+                
+                display.appendChild(span);
+            }
+        }
+
+        function verifyCaptcha() {
+            const userInput = document.getElementById('captcha-input').value.toUpperCase();
+            const inputElement = document.getElementById('captcha-input');
+            
+            if (userInput === currentCaptcha) {
+                // Success
+                verifyAge(true);
+            } else {
+                // Failure - shake the input and generate new captcha
+                inputElement.classList.add('shake');
+                setTimeout(() => {
+                    inputElement.classList.remove('shake');
+                }, 500);
+                
+                generateCaptcha();
+                showNotification('Incorrect code. Please try again.', 'error');
+            }
+        }
+
+        function verifyAge(verified) {
+            if (verified) {
+                // Store verification
+                localStorage.setItem('ageVerified', 'true');
+                localStorage.setItem('ageVerificationDate', new Date().toISOString());
+                
+                if (document.getElementById('remember-age').checked) {
+                    localStorage.setItem('rememberAge', 'true');
+                }
+                
+                // Stop matrix animation
+                if (matrixAnimation) {
+                    clearInterval(matrixAnimation);
+                }
+                
+                // Redirect to main site
+                window.location.href = 'index.html';
+            } else {
+                // Under 18 - show message and redirect
+                showNotification('You must be 18+ to access this website', 'error');
+                
+                setTimeout(() => {
+                    // Redirect to a safe page (Google in this case)
+                    window.location.href = 'https://google.com';
+                }, 2000);
+            }
+        }
+
+        function showHelp() {
+            document.getElementById('help-section').classList.remove('hidden');
+            
+            // Animate help section
+            anime({
+                targets: '#help-section',
+                opacity: [0, 1],
+                translateY: [20, 0],
+                duration: 300,
+                easing: 'easeOutQuad'
+            });
+        }
+
+        function hideHelp() {
+            document.getElementById('help-section').classList.add('hidden');
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm ${getNotificationClass(type)}`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            anime({
+                targets: notification,
+                opacity: [0, 1],
+                translateX: [100, 0],
+                duration: 300,
+                easing: 'easeOutQuad'
+            });
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                anime({
+                    targets: notification,
+                    opacity: [1, 0],
+                    translateX: [0, 100],
+                    duration: 300,
+                    easing: 'easeInQuad',
+                    complete: () => {
+                        if (document.body.contains(notification)) {
+                            document.body.removeChild(notification);
+                        }
+                    }
+                });
+            }, 3000);
+        }
+
+        function getNotificationClass(type) {
+            switch (type) {
+                case 'success':
+                    return 'bg-green-500 text-white';
+                case 'warning':
+                    return 'bg-yellow-500 text-white';
+                case 'error':
+                    return 'bg-red-500 text-white';
+                default:
+                    return 'bg-blue-500 text-white';
+            }
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            const canvas = document.getElementById('matrix-canvas');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Prevent right-click context menu for additional security
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+        // Prevent keyboard shortcuts that could bypass captcha
+        document.addEventListener('keydown', function(e) {
+            // Block F12, Ctrl+Shift+I, Ctrl+U, etc.
+            if (e.key === 'F12' || 
+                (e.ctrlKey && e.shiftKey && e.key === 'I') ||
+                (e.ctrlKey && e.key === 'u') ||
+                (e.ctrlKey && e.shiftKey && e.key === 'J')) {
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>

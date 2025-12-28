@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - fromNL.Top</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1a472a;
+            --secondary-color: #d4af37;
+            --accent-color: #ffffff;
+            --text-color: #2d3748;
+            --bg-color: #f8f9fa;
+            --wallpaper: none;
+        }
+        
+        body { 
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            background-image: var(--wallpaper);
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .gradient-text { 
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+        }
+        
+        .dashboard-card { 
+            transition: all 0.3s ease; 
+            background: var(--accent-color);
+        }
+        
+        .dashboard-card:hover { 
+            transform: translateY(-4px); 
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); 
+        }
+        
+        .login-overlay { 
+            background: rgba(0, 0, 0, 0.8); 
+            backdrop-filter: blur(5px); 
+        }
+        
+        .theme-configurator {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+        
+        .color-picker {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 3px solid #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .color-picker:hover {
+            transform: scale(1.1);
+        }
+        
+        .preview-panel {
+            background: var(--accent-color);
+            border: 2px solid var(--primary-color);
+        }
+        
+        .config-section {
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .ticker-container {
+            background: var(--primary-color);
+            color: white;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        
+        .ticker-content {
+            display: inline-block;
+            animation: scroll-left 30s linear infinite;
+        }
+        
+        @keyframes scroll-left {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        
+        .matrix-bg {
+            background: linear-gradient(45deg, #000000, #001100);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .matrix-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        .wallpaper-upload {
+            border: 2px dashed #cbd5e1;
+            transition: all 0.3s ease;
+        }
+        
+        .wallpaper-upload.dragover {
+            border-color: var(--primary-color);
+            background-color: rgba(26, 71, 42, 0.05);
+        }
+        
+        .layout-preview {
+            border: 2px solid #e5e7eb;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .layout-preview.selected {
+            border-color: var(--primary-color);
+            background: rgba(26, 71, 42, 0.05);
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Overlay -->
+    <div id="login-overlay" class="fixed inset-0 z-50 login-overlay flex items-center justify-center">
+        <div class="bg-white rounded-lg shadow-2xl p-8 max-w-md w-full mx-4">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold gradient-text mb-2" id="shop-name">fromNL.Top Admin</h1>
+                <p class="text-gray-600">Secure Admin Access</p>
+            </div>
+            
+            <form id="login-form" onsubmit="handleLogin(event)">
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Admin Password</label>
+                    <input type="password" id="admin-password" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent" placeholder="Enter admin password" required>
+                </div>
+                
+                <div class="mb-6">
+                    <div class="flex items-center">
+                        <input type="checkbox" id="remember-me" class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
+                        <label for="remember-me" class="ml-2 block text-sm text-gray-900">Remember me</label>
+                    </div>
+                </div>
+                
+                <button type="submit" class="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition-colors">
+                    Access Dashboard
+                </button>
+            </form>
+            
+            <div id="login-error" class="mt-4 text-red-500 text-sm text-center hidden">
+                Invalid password. Please try again.
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Ticker -->
+    <div id="live-ticker" class="ticker-container py-2">
+        <div class="ticker-content">
+            <span class="mx-8">BTC: €38,250.00 | ETH: €2,400.00 | XMR: €180.00 | </span>
+            <span class="mx-8">Shop: <span id="ticker-shop-name">fromNL.Top</span> | Live Support Available 24/7 | </span>
+            <span class="mx-8">Premium Products from Netherlands | Discreet Shipping Worldwide | </span>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="admin-dashboard" class="hidden">
+        <!-- Navigation -->
+        <nav class="bg-white/90 backdrop-blur-md shadow-sm border-b">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <div class="flex items-center">
+                        <img id="nav-logo" src="" alt="Logo" class="h-8 w-8 mr-3 hidden">
+                        <h1 id="nav-shop-name" class="text-2xl font-bold gradient-text">fromNL.Top Admin</h1>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4">
+                        <span class="text-sm text-gray-600">Last login: <span class="mono" id="last-login"></span></span>
+                        <button onclick="logout()" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors">
+                            Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Dashboard Content -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Enhanced Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="dashboard-card bg-white p-6 rounded-lg shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Total Revenue</p>
+                            <p class="text-2xl font-bold text-green-600">€<span id="total-revenue">0</span></p>
+                        </div>
+                        <div class="bg-green-100 p-3 rounded-full">
+                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-card bg-white p-6 rounded-lg shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Total Orders</p>
+                            <p class="text-2xl font-bold text-blue-600"><span id="total-orders">0</span></p>
+                        </div>
+                        <div class="bg-blue-100 p-3 rounded-full">
+                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-card bg-white p-6 rounded-lg shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Active Products</p>
+                            <p class="text-2xl font-bold text-purple-600"><span id="active-products">0</span></p>
+                        </div>
+                        <div class="bg-purple-100 p-3 rounded-full">
+                            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-card bg-white p-6 rounded-lg shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Telegram Users</p>
+                            <p class="text-2xl font-bold text-orange-600"><span id="telegram-users">0</span></p>
+                        </div>
+                        <div class="bg-orange-100 p-3 rounded-full">
+                            <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Enhanced Theme Configurator -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+                <!-- Theme Settings -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <h3 class="text-lg font-semibold mb-4">Advanced Theme Configurator</h3>
+                        <div class="theme-configurator rounded-lg p-6">
+                            <!-- Shop Identity -->
+                            <div class="config-section pl-4 mb-6">
+                                <h4 class="font-medium mb-3">Shop Identity</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Shop Name</label>
+                                        <input type="text" id="shop-name-input" value="fromNL.Top" onchange="updateShopName(this.value)" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Shop Slogan</label>
+                                        <input type="text" id="shop-slogan" value="Premium Products from Netherlands" onchange="updateShopSlogan(this.value)" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                                    </div>
+                                </div>
+                                
+                                <!-- Logo Upload -->
+                                <div class="mb-4">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Shop Logo</label>
+                                    <div id="logo-upload-area" class="wallpaper-upload border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer" onclick="document.getElementById('logo-input').click()">
+                                        <svg class="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                        </svg>
+                                        <p class="text-gray-600 mb-2">Click to upload logo</p>
+                                        <p class="text-sm text-gray-500">PNG, JPG, SVG up to 5MB</p>
+                                    </div>
+                                    <input type="file" id="logo-input" accept="image/*" class="hidden" onchange="handleLogoUpload(event)">
+                                    <div id="logo-preview" class="mt-4 hidden">
+                                        <img id="preview-logo" src="" alt="Logo Preview" class="h-16 w-auto mx-auto">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Wallpaper Upload -->
+                            <div class="config-section pl-4 mb-6">
+                                <h4 class="font-medium mb-3">Custom Wallpaper</h4>
+                                <div id="wallpaper-upload-area" class="wallpaper-upload border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer" onclick="document.getElementById('wallpaper-input').click()">
+                                    <svg class="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                    <p class="text-gray-600 mb-2">Click to upload wallpaper</p>
+                                    <p class="text-sm text-gray-500">PNG, JPG up to 10MB</p>
+                                </div>
+                                <input type="file" id="wallpaper-input" accept="image/*" class="hidden" onchange="handleWallpaperUpload(event)">
+                                <div class="flex space-x-2 mt-4">
+                                    <button onclick="removeWallpaper()" class="px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700 transition-colors">Remove</button>
+                                    <button onclick="setMatrixWallpaper()" class="px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700 transition-colors">Matrix Style</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Layout Options -->
+                            <div class="config-section pl-4 mb-6">
+                                <h4 class="font-medium mb-3">Layout Options</h4>
+                                <div class="grid grid-cols-3 gap-4">
+                                    <div class="layout-preview p-4 border-2 border-gray-200 rounded-lg text-center" onclick="selectLayout('classic')">
+                                        <div class="h-16 bg-gray-200 rounded mb-2"></div>
+                                        <div class="h-8 bg-gray-100 rounded mb-2"></div>
+                                        <div class="grid grid-cols-3 gap-1">
+                                            <div class="h-4 bg-gray-100 rounded"></div>
+                                            <div class="h-4 bg-gray-100 rounded"></div>
+                                            <div class="h-4 bg-gray-100 rounded"></div>
+                                        </div>
+                                        <p class="text-sm mt-2 font-medium">Classic</p>
+                                    </div>
+                                    
+                                    <div class="layout-preview p-4 border-2 border-gray-200 rounded-lg text-center" onclick="selectLayout('modern')">
+                                        <div class="h-12 bg-gray-200 rounded mb-2"></div>
+                                        <div class="h-16 bg-gray-100 rounded mb-2"></div>
+                                        <div class="grid grid-cols-2 gap-1">
+                                            <div class="h-6 bg-gray-100 rounded"></div>
+                                            <div class="h-6 bg-gray-100 rounded"></div>
+                                        </div>
+                                        <p class="text-sm mt-2 font-medium">Modern</p>
+                                    </div>
+                                    
+                                    <div class="layout-preview p-4 border-2 border-gray-200 rounded-lg text-center" onclick="selectLayout('minimal')">
+                                        <div class="h-8 bg-gray-200 rounded mb-2"></div>
+                                        <div class="h-20 bg-gray-100 rounded mb-2"></div>
+                                        <div class="h-4 bg-gray-100 rounded"></div>
+                                        <p class="text-sm mt-2 font-medium">Minimal</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Color Settings -->
+                            <div class="config-section pl-4 mb-6">
+                                <h4 class="font-medium mb-3">Primary Colors</h4>
+                                <div class="flex space-x-4 mb-4">
+                                    <div class="text-center">
+                                        <div class="color-picker" style="background-color: #1a472a;" onclick="setPrimaryColor('#1a472a')"></div>
+                                        <p class="text-xs mt-1">Forest Green</p>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="color-picker" style="background-color: #2d5a3a;" onclick="setPrimaryColor('#2d5a3a')"></div>
+                                        <p class="text-xs mt-1">Dark Green</p>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="color-picker" style="background-color: #d4af37;" onclick="setPrimaryColor('#d4af37')"></div>
+                                        <p class="text-xs mt-1">Gold</p>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="color-picker" style="background-color: #8B4513;" onclick="setPrimaryColor('#8B4513')"></div>
+                                        <p class="text-xs mt-1">Brown</p>
+                                    </div>
+                                </div>
+                                
+                                <h4 class="font-medium mb-3">Secondary Colors</h4>
+                                <div class="flex space-x-4 mb-4">
+                                    <div class="text-center">
+                                        <div class="color-picker" style="background-color: #d4af37;" onclick="setSecondaryColor('#d4af37')"></div>
+                                        <p class="text-xs mt-1">Gold</p>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="color-picker" style="background-color: #FFD700;" onclick="setSecondaryColor('#FFD700')"></div>
+                                        <p class="text-xs mt-1">Bright Gold</p>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="color-picker" style="background-color: #32CD32;" onclick="setSecondaryColor('#32CD32')"></div>
+                                        <p class="text-xs mt-1">Lime Green</p>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="color-picker" style="background-color: #FF6347;" onclick="setSecondaryColor('#FF6347')"></div>
+                                        <p class="text-xs mt-1">Tomato</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Typography Settings -->
+                            <div class="config-section pl-4 mb-6">
+                                <h4 class="font-medium mb-3">Typography</h4>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium mb-1">Font Family</label>
+                                        <select id="font-selector" onchange="changeFontFamily(this.value)" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                                            <option value="Inter">Inter (Default)</option>
+                                            <option value="Roboto">Roboto</option>
+                                            <option value="Open Sans">Open Sans</option>
+                                            <option value="Lato">Lato</option>
+                                            <option value="Poppins">Poppins</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium mb-1">Font Size</label>
+                                        <select id="size-selector" onchange="changeFontSize(this.value)" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                                            <option value="14">14px (Small)</option>
+                                            <option value="16" selected>16px (Default)</option>
+                                            <option value="18">18px (Large)</option>
+                                            <option value="20">20px (Extra Large)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Layout Settings -->
+                            <div class="config-section pl-4">
+                                <h4 class="font-medium mb-3">Layout</h4>
+                                <div class="flex items-center space-x-4">
+                                    <label class="flex items-center">
+                                        <input type="radio" name="theme" value="light" checked onchange="setTheme('light')" class="mr-2">
+                                        <span class="text-sm">Light Theme</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="radio" name="theme" value="dark" onchange="setTheme('dark')" class="mr-2">
+                                        <span class="text-sm">Dark Theme</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="radio" name="theme" value="auto" onchange="setTheme('auto')" class="mr-2">
+                                        <span class="text-sm">Auto</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Preview -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <h3 class="text-lg font-semibold mb-4">Live Preview</h3>
+                        <div class="preview-panel rounded-lg p-4 min-h-64">
+                            <div class="text-center mb-4">
+                                <img id="preview-logo-small" src="" alt="Logo" class="h-8 w-auto mx-auto mb-2 hidden">
+                                <h4 id="preview-shop-name" class="text-xl font-bold" style="color: var(--primary-color);">fromNL.Top</h4>
+                                <p id="preview-shop-slogan" class="text-sm text-gray-600">Premium Products from Netherlands</p>
+                            </div>
+                            
+                            <div class="space-y-3">
+                                <div class="bg-gray-100 rounded p-3">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-sm font-medium">Sample Product</span>
+                                        <span class="text-sm font-bold" style="color: var(--secondary-color);">€25.00</span>
+                                    </div>
+                                </div>
+                                
+                                <button class="w-full py-2 rounded text-white text-sm" style="background-color: var(--primary-color);">
+                                    Add to Cart
+                                </button>
+                                
+                                <div class="text-center">
+                                    <div class="inline-flex items-center space-x-2 text-xs text-gray-500">
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        <span>Verified Quality</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 space-y-2">
+                            <button onclick="exportTheme()" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm">
+                                Export Theme
+                            </button>
+                            <button onclick="importTheme()" class="w-full border border-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-50 transition-colors text-sm">
+                                Import Theme
+                            </button>
+                            <button onclick="resetTheme()" class="w-full bg-gray-600 text-white py-2 rounded-lg hover:bg-gray-700 transition-colors text-sm">
+                                Reset to Default
+                            </button>
+                            <button onclick="showPasswordChange()" class="w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 transition-colors text-sm mt-2">
+                                Change Password
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Crypto Address Management -->
+            <div class="bg-white rounded-lg shadow p-6 mb-8">
+                <h3 class="text-lg font-semibold mb-4">Crypto Address Management</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Bitcoin (BTC) Address</label>
+                        <input type="text" id="btc-address" value="1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent mono text-sm" placeholder="Enter BTC address">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Ethereum (ETH) Address</label>
+                        <input type="text" id="eth-address" value="0x742d35Cc6634C0532925a3b844Bc9e7595f" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent mono text-sm" placeholder="Enter ETH address">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Litecoin (LTC) Address</label>
+                        <input type="text" id="ltc-address" value="LcHKqPugJMCbKb2g4cPqCHqBcZvNq9pFVd" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent mono text-sm" placeholder="Enter LTC address">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tron (TRX) Address</label>
+                        <input type="text" id="trx-address" value="TXYZop4qF7gXxqY8G1a8y8pC1Y6G3qF2Z1" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent mono text-sm" placeholder="Enter TRX address">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Monero (XMR) Address</label>
+                        <input type="text" id="xmr-address" value="47xZ1L7Bx3sRdQBqyH6Z9P1P6WkR6N6W1H6kQ9T8Y7U6" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent mono text-sm" placeholder="Enter XMR address">
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <button onclick="saveCryptoAddresses()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
+                        Save Addresses
+                    </button>
+                </div>
+            </div>
+
+            <!-- HoodPay Integration -->
+            <div class="bg-white rounded-lg shadow p-6 mb-8">
+                <h3 class="text-lg font-semibold mb-4">HoodPay Payment Gateway</h3>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="font-medium">HoodPay Integration</h4>
+                            <p class="text-sm text-gray-600">Enable HoodPay for secure cryptocurrency payments</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="hoodpay-enabled" class="sr-only peer" onchange="toggleHoodPay()">
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                        </label>
+                    </div>
+                    
+                    <div id="hoodpay-config" class="hidden">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">HoodPay API Key</label>
+                                <input type="text" id="hoodpay-api-key" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent mono text-sm" placeholder="Enter HoodPay API Key">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">HoodPay Secret Key</label>
+                                <input type="password" id="hoodpay-secret-key" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent mono text-sm" placeholder="Enter HoodPay Secret Key">
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Webhook URL</label>
+                            <input type="text" id="hoodpay-webhook" value="https://fromnl.top/webhook/hoodpay" readonly class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 mono text-sm">
+                        </div>
+                        
+                        <div class="mt-4">
+                            <button onclick="saveHoodPayConfig()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                                Save HoodPay Configuration
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <!-- Revenue Chart -->
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-lg font-semibold mb-4">Revenue Overview</h3>
+                    <div id="revenue-chart" style="height: 300px;"></div>
+                </div>
+
+                <!-- Sales by Category -->
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-lg font-semibold mb-4">Sales by Category</h3>
+                    <div id="category-chart" style="height: 300px;"></div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <a href="products.html" class="dashboard-card bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow">
+                    <div class="text-center">
+                        <div class="bg-green-100 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
+                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            </svg>
+                        </div>
+                        <h4 class="text-lg font-semibold mb-2">Manage Products</h4>
+                        <p class="text-gray-600">Add, edit, or remove products</p>
+                    </div>
+                </a>
+
+                <a href="orders.html" class="dashboard-card bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow">
+                    <div class="text-center">
+                        <div class="bg-blue-100 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
+                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                            </svg>
+                        </div>
+                        <h4 class="text-lg font-semibold mb-2">Order Management</h4>
+                        <p class="text-gray-600">Process and track orders</p>
+                    </div>
+                </a>
+
+                <a href="telegram.html" class="dashboard-card bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow">
+                    <div class="text-center">
+                        <div class="bg-orange-100 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
+                            <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                            </svg>
+                        </div>
+                        <h4 class="text-lg font-semibold mb-2">Telegram Bot</h4>
+                        <p class="text-gray-600">Configure bot settings</p>
+                    </div>
+                </a>
+
+                <a href="pages.html" class="dashboard-card bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow">
+                    <div class="text-center">
+                        <div class="bg-purple-100 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
+                            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                        </div>
+                        <h4 class="text-lg font-semibold mb-2">Page Manager</h4>
+                        <p class="text-gray-600">Add and manage pages</p>
+                    </div>
+                </a>
+
+                <div class="dashboard-card bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow cursor-pointer" onclick="showPageManager()">
+                    <div class="text-center">
+                        <div class="bg-purple-100 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
+                            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                        </div>
+                        <h4 class="text-lg font-semibold mb-2">Page Manager</h4>
+                        <p class="text-gray-600">Add and manage pages</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Matrix Canvas -->
+    <canvas id="matrix-canvas" class="matrix-canvas hidden"></canvas>
+
+    <!-- Password Change Modal -->
+    <div id="password-modal" class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-2xl max-w-md w-full">
+            <div class="p-6 border-b">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-xl font-semibold">Change Admin Password</h3>
+                    <button onclick="closePasswordModal()" class="text-gray-500 hover:text-gray-700">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <form id="password-form" onsubmit="handlePasswordChange(event)" class="p-6">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
+                        <input type="password" id="current-password" required 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">New Password</label>
+                        <input type="password" id="new-password" required 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
+                        <input type="password" id="confirm-password" required 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                    </div>
+                </div>
+                
+                <div class="flex justify-end space-x-4 mt-8">
+                    <button type="button" onclick="closePasswordModal()" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                        Change Password
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="crypto.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>

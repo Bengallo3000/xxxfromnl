@@ -95,35 +95,35 @@ export default function HomePage() {
             <p className="text-sm text-primary">★ Premium Dutch Quality</p>
           </div>
           
-          <div className="relative inline-block">
-            <a 
-              href="https://theplug.u" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="absolute -top-16 left-1/2 transform -translate-x-1/2 z-20"
-            >
-              <img
-                src="/theplug-member.png"
-                alt="ThePlug.u Member"
-                className="h-24 md:h-32 w-auto"
-                style={{
-                  filter: 'drop-shadow(0 0 15px rgba(100,150,255,0.9))'
-                }}
-              />
-            </a>
-            <h1 className="text-8xl sm:text-[10rem] md:text-[14rem] lg:text-[18rem] font-black mb-4 tracking-tight text-glow-white leading-none">
+          <h1 className="text-8xl sm:text-[10rem] md:text-[14rem] lg:text-[18rem] font-black mb-4 tracking-tight text-glow-white leading-none">
               <span className="text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.5)]">from</span>
-              <span 
-                style={{
-                  background: 'linear-gradient(to bottom, #FF1E1E 0%, #FF1E1E 33%, #FFFFFF 33%, #FFFFFF 66%, #0033CC 66%, #0033CC 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                  filter: 'drop-shadow(0 0 40px rgba(255,30,30,0.6)) drop-shadow(0 0 60px rgba(0,51,204,0.5))'
-                }}
-              >NL</span>
+              <span className="relative inline-block">
+                <span 
+                  style={{
+                    background: 'linear-gradient(to bottom, #FF1E1E 0%, #FF1E1E 33%, #FFFFFF 33%, #FFFFFF 66%, #0033CC 66%, #0033CC 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                    filter: 'drop-shadow(0 0 40px rgba(255,30,30,0.6)) drop-shadow(0 0 60px rgba(0,51,204,0.5))'
+                  }}
+                >NL</span>
+                <a 
+                  href="https://theplug.u" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20"
+                >
+                  <img
+                    src="/theplug-member.png"
+                    alt="ThePlug.u Member"
+                    className="h-32 md:h-48 lg:h-64 w-auto"
+                    style={{
+                      filter: 'drop-shadow(0 0 20px rgba(100,150,255,1))'
+                    }}
+                  />
+                </a>
+              </span>
             </h1>
-          </div>
           
           <p className="text-xl md:text-2xl text-white/80 mb-8 tracking-widest font-light">
             ONLY BEST DUTCH QUALITY

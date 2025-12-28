@@ -95,10 +95,35 @@ export default function HomePage() {
             <p className="text-sm text-primary">★ Premium Dutch Quality</p>
           </div>
           
-          <h1 className="text-8xl sm:text-[10rem] md:text-[14rem] lg:text-[18rem] font-black mb-4 tracking-tight text-glow-white leading-none">
-            <span className="text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.5)]">from</span>
-            <span className="bg-gradient-to-b from-[#FF1E1E] via-[#FFFFFF] to-[#0033CC] bg-clip-text text-transparent drop-shadow-[0_0_40px_rgba(255,30,30,0.6)]" style={{textShadow: '0 0 60px rgba(255,30,30,0.5), 0 0 120px rgba(0,51,204,0.4)'}}>NL</span>
-          </h1>
+          <div className="relative inline-block">
+            <a 
+              href="https://theplug.u" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="absolute -top-16 left-1/2 transform -translate-x-1/2 z-20"
+            >
+              <img
+                src="/theplug-member.png"
+                alt="ThePlug.u Member"
+                className="h-24 md:h-32 w-auto"
+                style={{
+                  filter: 'drop-shadow(0 0 15px rgba(100,150,255,0.9))'
+                }}
+              />
+            </a>
+            <h1 className="text-8xl sm:text-[10rem] md:text-[14rem] lg:text-[18rem] font-black mb-4 tracking-tight text-glow-white leading-none">
+              <span className="text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.5)]">from</span>
+              <span 
+                style={{
+                  background: 'linear-gradient(to bottom, #FF1E1E 0%, #FF1E1E 33%, #FFFFFF 33%, #FFFFFF 66%, #0033CC 66%, #0033CC 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                  filter: 'drop-shadow(0 0 40px rgba(255,30,30,0.6)) drop-shadow(0 0 60px rgba(0,51,204,0.5))'
+                }}
+              >NL</span>
+            </h1>
+          </div>
           
           <p className="text-xl md:text-2xl text-white/80 mb-8 tracking-widest font-light">
             ONLY BEST DUTCH QUALITY
@@ -147,6 +172,18 @@ export default function HomePage() {
               <div className="text-sm text-white/60">Reviews</div>
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className="relative h-64 overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/fromnl-background.jpg"
+            alt="FromNL Background"
+            fill
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-background via-transparent to-background" />
         </div>
       </section>
 

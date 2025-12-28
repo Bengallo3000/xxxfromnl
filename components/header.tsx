@@ -107,37 +107,18 @@ export function Header() {
           <div className="flex items-center justify-between h-16">
             <Link href="/" className="flex items-center">
               <span className="text-2xl font-bold text-white">from</span>
-              <div className="relative">
-                <span 
-                  className="text-2xl font-bold"
-                  style={{
-                    background: 'linear-gradient(to bottom, #FF1E1E 0%, #FF1E1E 33%, #FFFFFF 33%, #FFFFFF 66%, #0033CC 66%, #0033CC 100%)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                    filter: 'drop-shadow(0 0 8px rgba(255,30,30,0.6)) drop-shadow(0 0 12px rgba(0,51,204,0.6))',
-                    textShadow: '0 0 10px rgba(255,255,255,0.5)'
-                  }}
-                >
-                  NL
-                </span>
-                <a 
-                  href="https://theplug.u" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="absolute -top-3 -right-8"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <img
-                    src="/theplug-member.png"
-                    alt="ThePlug.u Member"
-                    className="h-10 w-auto"
-                    style={{
-                      filter: 'drop-shadow(0 0 8px rgba(100,150,255,0.8))'
-                    }}
-                  />
-                </a>
-              </div>
+              <span 
+                className="text-2xl font-bold"
+                style={{
+                  background: 'linear-gradient(to bottom, #FF1E1E 0%, #FF1E1E 33%, #FFFFFF 33%, #FFFFFF 66%, #0033CC 66%, #0033CC 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                  filter: 'drop-shadow(0 0 8px rgba(255,30,30,0.6)) drop-shadow(0 0 12px rgba(0,51,204,0.6))'
+                }}
+              >
+                NL
+              </span>
               <span className="text-xs text-primary ml-1">.pro</span>
             </Link>
 

@@ -35,16 +35,10 @@ export default function HomePage() {
             <p className="text-sm text-primary">★ Premium Dutch Quality</p>
           </div>
           
-          <div className="mb-4">
-            <Image
-              src="/fromnl-logo.png"
-              alt="FromNL Logo"
-              width={280}
-              height={280}
-              className="mx-auto rounded-lg"
-              style={{ width: 'auto', height: 'auto', maxWidth: '280px' }}
-            />
-          </div>
+          <h1 className="text-5xl md:text-8xl font-bold mb-4 tracking-tight text-glow-white">
+            <span className="text-white">from</span>
+            <span className="bg-gradient-to-b from-[#D64545] via-white to-[#1E4C8E] bg-clip-text text-transparent">NL</span>
+          </h1>
           
           <p className="text-xl md:text-2xl text-white/80 mb-8 tracking-widest font-light">
             ONLY BEST DUTCH QUALITY

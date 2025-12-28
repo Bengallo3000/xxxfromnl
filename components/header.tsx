@@ -25,10 +25,11 @@ export function Header() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="flex items-center gap-2">
-            <div className="flex items-center">
-              <span className="text-xl font-bold text-white">From</span>
-              <span className="text-xl font-bold bg-gradient-to-b from-[#D64545] via-white to-[#1E4C8E] bg-clip-text text-transparent">NL</span>
-            </div>
+            <img
+              src="/fromnl-logo.png"
+              alt="FromNL Logo"
+              className="h-10 w-auto rounded"
+            />
             <span className="text-xs text-primary">.pro</span>
           </Link>
 

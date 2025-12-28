@@ -111,7 +111,7 @@ export default function HomePage() {
                   href="https://theplug.u" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="absolute -top-16 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20"
+                  className="absolute -top-4 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20"
                 >
                   <img
                     src="/theplug-member.png"

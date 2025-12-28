@@ -1030,16 +1030,36 @@ function handleImageUpload(event) {
             reader.onload = (e) => {
                 const preview = document.createElement('div');
                 preview.className = 'image-preview';
-                preview.innerHTML = `
-                    <img src="${e.target.result}" alt="Preview">
-                    <div class="image-overlay">
-                        <button type="button" onclick="this.parentElement.parentElement.remove()" class="bg-red-500 text-white p-2 rounded">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                            </svg>
-                        </button>
-                    </div>
-                `;
+                
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.alt = 'Preview';
+                
+                const overlay = document.createElement('div');
+                overlay.className = 'image-overlay';
+                
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'bg-red-500 text-white p-2 rounded';
+                button.addEventListener('click', () => preview.remove());
+                
+                const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                svg.setAttribute('class', 'w-4 h-4');
+                svg.setAttribute('fill', 'none');
+                svg.setAttribute('stroke', 'currentColor');
+                svg.setAttribute('viewBox', '0 0 24 24');
+                
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                path.setAttribute('stroke-linecap', 'round');
+                path.setAttribute('stroke-linejoin', 'round');
+                path.setAttribute('stroke-width', '2');
+                path.setAttribute('d', 'M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16');
+                
+                svg.appendChild(path);
+                button.appendChild(svg);
+                overlay.appendChild(button);
+                preview.appendChild(img);
+                preview.appendChild(overlay);
                 previews.appendChild(preview);
             };
             reader.readAsDataURL(file);

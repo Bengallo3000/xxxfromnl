@@ -81,7 +81,7 @@ export default function HomePage() {
       <section className="relative min-h-[600px] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image
-            src="/techverse-wallpaper.png"
+            src="/hero-bg.png"
             alt="TechVerseHub Hero"
             fill
             className="object-cover"
@@ -91,42 +91,42 @@ export default function HomePage() {
         </div>
 
         <div className="container mx-auto px-4 relative z-10 text-center py-16">
-          <div className="inline-block mb-4 px-4 py-1 border border-primary/30 rounded-full bg-background/30 backdrop-blur">
-            <p className="text-sm text-primary">★ Premium Dutch Quality</p>
+          <div className="inline-block mb-4 px-4 py-1 border border-cyan-400/30 rounded-full bg-background/30 backdrop-blur">
+            <p className="text-sm text-cyan-400">★ Premium Software & Tools</p>
           </div>
           
-          <h1 className="text-8xl sm:text-[10rem] md:text-[14rem] lg:text-[18rem] font-black mb-4 tracking-tight text-glow-white leading-none">
-              <span className="text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.5)]">from</span>
-              <span className="relative inline-block">
-                <span 
+          <h1 className="text-6xl sm:text-8xl md:text-[10rem] lg:text-[12rem] font-black mb-4 tracking-tight leading-none relative">
+              <span 
+                className="bg-gradient-to-r from-cyan-400 via-cyan-300 to-purple-500 bg-clip-text text-transparent"
+                style={{
+                  filter: 'drop-shadow(0 0 30px rgba(0,255,255,0.5)) drop-shadow(0 0 60px rgba(168,85,247,0.4))'
+                }}
+              >TECHVERSE</span>
+              <span 
+                className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent"
+                style={{
+                  filter: 'drop-shadow(0 0 30px rgba(168,85,247,0.6)) drop-shadow(0 0 60px rgba(236,72,153,0.4))'
+                }}
+              >HUB</span>
+              <a 
+                href="https://theplug.u" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="absolute -top-4 right-0 md:right-10 transform -translate-y-1/2 z-20"
+              >
+                <img
+                  src="/theplug-member.png"
+                  alt="ThePlug.u Member"
+                  className="h-20 md:h-32 lg:h-40 w-auto"
                   style={{
-                    background: 'linear-gradient(to bottom, #FF1E1E 0%, #FF1E1E 33%, #FFFFFF 33%, #FFFFFF 66%, #0033CC 66%, #0033CC 100%)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                    filter: 'drop-shadow(0 0 40px rgba(255,30,30,0.6)) drop-shadow(0 0 60px rgba(0,51,204,0.5))'
+                    filter: 'drop-shadow(0 0 20px rgba(100,150,255,1))'
                   }}
-                >NL</span>
-                <a 
-                  href="https://theplug.u" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="absolute -top-4 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20"
-                >
-                  <img
-                    src="/theplug-member.png"
-                    alt="ThePlug.u Member"
-                    className="h-32 md:h-48 lg:h-64 w-auto"
-                    style={{
-                      filter: 'drop-shadow(0 0 20px rgba(100,150,255,1))'
-                    }}
-                  />
-                </a>
-              </span>
+                />
+              </a>
             </h1>
           
           <p className="text-xl md:text-2xl text-white/80 mb-8 tracking-widest font-light">
-            ONLY BEST DUTCH QUALITY
+            PREMIUM SOFTWARE & TOOLS
           </p>
 
           <div className="flex flex-wrap justify-center gap-6 mb-8 text-sm text-white/70">
@@ -178,8 +178,8 @@ export default function HomePage() {
       <section className="relative h-64 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image
-            src="/fromnl-background.jpg"
-            alt="FromNL Background"
+            src="/techverse-wallpaper.png"
+            alt="TechVerseHub Background"
             fill
             className="object-cover"
           />

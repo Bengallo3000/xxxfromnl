@@ -1,9 +1,9 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Package, ShoppingCart, Search, X } from "lucide-react"
+import { useSearchParams } from "next/navigation"
+import { Package, ShoppingCart } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 
 interface Product {
   id: number
@@ -19,7 +19,8 @@ export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
-  const [searchQuery, setSearchQuery] = useState("")
+  const searchParams = useSearchParams()
+  const searchQuery = searchParams.get('search') || ""
 
   useEffect(() => {
     fetchProducts()
@@ -86,31 +87,11 @@ export default function ProductsPage() {
           </div>
         )}
 
-        <div className="max-w-md mx-auto mb-8">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-            <Input
-              type="text"
-              placeholder="Search products..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 pr-10 bg-card border-border"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            )}
-          </div>
-          {searchQuery && (
-            <p className="text-sm text-muted-foreground mt-2 text-center">
-              {filteredProducts.length} result{filteredProducts.length !== 1 ? 's' : ''} for "{searchQuery}"
-            </p>
-          )}
-        </div>
+        {searchQuery && (
+          <p className="text-sm text-muted-foreground mb-8 text-center">
+            {filteredProducts.length} result{filteredProducts.length !== 1 ? 's' : ''} for "{searchQuery}"
+          </p>
+        )}
 
         {loading ? (
           <div className="text-center py-20">

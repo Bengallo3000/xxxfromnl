@@ -75,8 +75,18 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-background relative">
+      <div 
+        className="fixed inset-0 z-0"
+        style={{
+          backgroundImage: 'url(/techverse-wallpaper.png)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      />
+      <div className="fixed inset-0 z-[1] bg-background/70" />
       <MatrixEffect opacity={0.25} />
-      <div className="absolute inset-0 scanlines opacity-20 pointer-events-none z-[1]" />
+      <div className="absolute inset-0 scanlines opacity-20 pointer-events-none z-[3]" />
       
       <section className="relative min-h-[600px] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">

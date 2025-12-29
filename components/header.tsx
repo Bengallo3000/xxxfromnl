@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { ShoppingCart, User, Menu, X, Globe } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { ShoppingCart, User, Menu, X, Globe, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 
 interface NavItem {
   id: number
@@ -37,6 +39,15 @@ export function Header() {
   const [navigation, setNavigation] = useState(defaultNavigation)
   const [headerBanners, setHeaderBanners] = useState<Banner[]>([])
   const [settings, setSettings] = useState<SiteSettings>({})
+  const [searchQuery, setSearchQuery] = useState("")
+  const router = useRouter()
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (searchQuery.trim()) {
+      router.push(`/products?search=${encodeURIComponent(searchQuery.trim())}`)
+    }
+  }
 
   useEffect(() => {
     fetchData()
@@ -124,6 +135,19 @@ export function Header() {
                 </Link>
               ))}
             </nav>
+
+            <form onSubmit={handleSearch} className="hidden md:flex items-center">
+              <div className="relative">
+                <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  type="text"
+                  placeholder="Search..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-8 pr-3 py-1 h-8 w-40 bg-background/50 border-border text-sm"
+                />
+              </div>
+            </form>
 
             <div className="flex items-center gap-2">
               <Button variant="ghost" size="sm" className="hidden md:flex items-center gap-2">

@@ -62,6 +62,30 @@ export default function ProductsPage() {
           </p>
         </div>
 
+        {categories.length > 0 && (
+          <div className="flex flex-wrap gap-2 justify-center mb-8">
+            <Button
+              variant={selectedCategory === null ? "default" : "outline"}
+              size="sm"
+              onClick={() => setSelectedCategory(null)}
+              className={selectedCategory === null ? "bg-primary" : ""}
+            >
+              All
+            </Button>
+            {categories.map((cat) => (
+              <Button
+                key={cat}
+                variant={selectedCategory === cat ? "default" : "outline"}
+                size="sm"
+                onClick={() => setSelectedCategory(cat)}
+                className={selectedCategory === cat ? "bg-primary" : ""}
+              >
+                {cat}
+              </Button>
+            ))}
+          </div>
+        )}
+
         <div className="max-w-md mx-auto mb-8">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
@@ -87,30 +111,6 @@ export default function ProductsPage() {
             </p>
           )}
         </div>
-
-        {categories.length > 0 && (
-          <div className="flex flex-wrap gap-2 justify-center mb-8">
-            <Button
-              variant={selectedCategory === null ? "default" : "outline"}
-              size="sm"
-              onClick={() => setSelectedCategory(null)}
-              className={selectedCategory === null ? "bg-primary" : ""}
-            >
-              All
-            </Button>
-            {categories.map((cat) => (
-              <Button
-                key={cat}
-                variant={selectedCategory === cat ? "default" : "outline"}
-                size="sm"
-                onClick={() => setSelectedCategory(cat)}
-                className={selectedCategory === cat ? "bg-primary" : ""}
-              >
-                {cat}
-              </Button>
-            ))}
-          </div>
-        )}
 
         {loading ? (
           <div className="text-center py-20">

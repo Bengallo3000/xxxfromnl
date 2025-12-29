@@ -81,8 +81,8 @@ export default function HomePage() {
       <section className="relative min-h-[600px] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image
-            src="/fromnl-wallpaper.jpg"
-            alt="FromNL Hero"
+            src="/techverse-wallpaper.png"
+            alt="TechVerseHub Hero"
             fill
             className="object-cover"
             priority

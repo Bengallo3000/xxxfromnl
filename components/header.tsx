@@ -106,20 +106,11 @@ export function Header() {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <Link href="/" className="flex items-center">
-              <span className="text-2xl font-bold text-white">from</span>
-              <span 
-                className="text-2xl font-bold"
-                style={{
-                  background: 'linear-gradient(to bottom, #FF1E1E 0%, #FF1E1E 33%, #FFFFFF 33%, #FFFFFF 66%, #0033CC 66%, #0033CC 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                  filter: 'drop-shadow(0 0 8px rgba(255,30,30,0.6)) drop-shadow(0 0 12px rgba(0,51,204,0.6))'
-                }}
-              >
-                NL
-              </span>
-              <span className="text-xs text-primary ml-1">.pro</span>
+              <img 
+                src="/techverse-logo.jpg" 
+                alt="TechVerseHub Logo" 
+                className="h-10 w-auto"
+              />
             </Link>
 
             <nav className="hidden md:flex items-center gap-6">

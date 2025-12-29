@@ -107,13 +107,13 @@ export default function HomePage() {
           
           <h1 className="text-6xl sm:text-8xl md:text-[10rem] lg:text-[12rem] font-black mb-4 tracking-tight leading-none relative">
               <span 
-                className="bg-gradient-to-r from-cyan-400 via-cyan-300 to-purple-500 bg-clip-text text-transparent"
+                className="bg-gradient-to-r from-cyan-400 via-cyan-300 to-purple-500 bg-clip-text text-transparent block"
                 style={{
                   filter: 'drop-shadow(0 0 30px rgba(0,255,255,0.5)) drop-shadow(0 0 60px rgba(168,85,247,0.4))'
                 }}
               >TECHVERSE</span>
               <span 
-                className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent"
+                className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent block"
                 style={{
                   filter: 'drop-shadow(0 0 30px rgba(168,85,247,0.6)) drop-shadow(0 0 60px rgba(236,72,153,0.4))'
                 }}

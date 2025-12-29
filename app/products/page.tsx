@@ -50,7 +50,7 @@ export default function ProductsPage() {
             <span className="text-primary">Products</span>
           </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Discover our premium selection of Dutch quality products
+            Discover our premium selection of software and digital tools
           </p>
         </div>
 

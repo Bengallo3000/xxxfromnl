@@ -1066,15 +1066,15 @@ export default function AdminPage() {
               <form onSubmit={saveSettings} className="max-w-xl space-y-4">
                 <div>
                   <label className="block text-sm font-medium mb-2">Shop Name</label>
-                  <Input value={siteSettings.shop_name || "FromNL.pro"} onChange={(e) => setSiteSettings({...siteSettings, shop_name: e.target.value})} className="bg-input" />
+                  <Input value={siteSettings.shop_name || "TechVerseHub.xyz"} onChange={(e) => setSiteSettings({...siteSettings, shop_name: e.target.value})} className="bg-input" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2">Shop Slogan</label>
-                  <Input value={siteSettings.shop_slogan || "Only Best Dutch Quality"} onChange={(e) => setSiteSettings({...siteSettings, shop_slogan: e.target.value})} className="bg-input" />
+                  <Input value={siteSettings.shop_slogan || "Premium Software & Tools"} onChange={(e) => setSiteSettings({...siteSettings, shop_slogan: e.target.value})} className="bg-input" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2">Contact Email</label>
-                  <Input value={siteSettings.contact_email || ""} onChange={(e) => setSiteSettings({...siteSettings, contact_email: e.target.value})} placeholder="support@fromnl.pro" className="bg-input" />
+                  <Input value={siteSettings.contact_email || ""} onChange={(e) => setSiteSettings({...siteSettings, contact_email: e.target.value})} placeholder="support@techversehub.xyz" className="bg-input" />
                 </div>
                 <div className="p-4 bg-green-500/10 border border-green-500/30 rounded-lg">
                   <div className="flex items-center gap-3">
@@ -1116,7 +1116,7 @@ export default function AdminPage() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-2">Logo URL</label>
-                      <Input value={siteSettings.logo_url || "/fromnl-logo.png"} onChange={(e) => setSiteSettings({...siteSettings, logo_url: e.target.value})} placeholder="/fromnl-logo.png" className="bg-input" />
+                      <Input value={siteSettings.logo_url || "/techverse-logo.jpg"} onChange={(e) => setSiteSettings({...siteSettings, logo_url: e.target.value})} placeholder="/techverse-logo.jpg" className="bg-input" />
                     </div>
                   </div>
                 </div>
@@ -1133,7 +1133,7 @@ export default function AdminPage() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-2">Copyright Text</label>
-                      <Input value={siteSettings.copyright_text || "© 2025 FromNL.pro"} onChange={(e) => setSiteSettings({...siteSettings, copyright_text: e.target.value})} className="bg-input" />
+                      <Input value={siteSettings.copyright_text || "© 2025 TechVerseHub.xyz"} onChange={(e) => setSiteSettings({...siteSettings, copyright_text: e.target.value})} className="bg-input" />
                     </div>
                   </div>
                 </div>
@@ -1161,7 +1161,7 @@ export default function AdminPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2">Support Email (fallback)</label>
-                  <Input value={siteSettings.support_email || ""} onChange={(e) => setSiteSettings({...siteSettings, support_email: e.target.value})} placeholder="support@fromnl.pro" className="bg-input" />
+                  <Input value={siteSettings.support_email || ""} onChange={(e) => setSiteSettings({...siteSettings, support_email: e.target.value})} placeholder="support@techversehub.xyz" className="bg-input" />
                 </div>
                 <Button type="submit" className="bg-primary hover:bg-primary/90" disabled={loading}>
                   {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}

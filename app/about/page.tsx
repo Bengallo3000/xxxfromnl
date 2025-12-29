@@ -7,20 +7,19 @@ export default function AboutPage() {
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">About FromNL.pro</h1>
-            <p className="text-xl text-muted-foreground">Your trusted source for premium Dutch quality products</p>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">About TechVerseHub.xyz</h1>
+            <p className="text-xl text-muted-foreground">Your trusted source for premium software and digital tools</p>
           </div>
 
           <Card className="p-8 mb-8 border-primary/20 bg-card/50 backdrop-blur">
             <h2 className="text-2xl font-bold mb-4">Our Story</h2>
             <p className="text-muted-foreground mb-4">
-              FromNL.pro was founded with a simple mission: to bring the finest Dutch quality products directly to
-              customers worldwide. We believe in the superior craftsmanship and quality that the Netherlands is known
-              for.
+              TechVerseHub.xyz was founded with a simple mission: to bring the finest software and digital tools directly to
+              customers worldwide. We believe in providing high-quality digital products that empower users.
             </p>
             <p className="text-muted-foreground">
-              With years of experience in sourcing and distributing premium products, we have built a reputation for
-              reliability, discretion, and exceptional customer service. Our commitment to quality ensures that every
+              With years of experience in sourcing and distributing premium software, we have built a reputation for
+              reliability, security, and exceptional customer service. Our commitment to quality ensures that every
               product meets the highest standards.
             </p>
           </Card>

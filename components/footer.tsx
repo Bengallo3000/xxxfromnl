@@ -87,16 +87,14 @@ export function Footer() {
         <div className="grid md:grid-cols-4 gap-8 mb-8">
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <span className="text-lg font-bold text-white">{settings.shop_name?.replace('NL', '') || 'From'}</span>
-              <span className="text-lg font-bold bg-gradient-to-b from-[#FF1E1E] via-white to-[#0033CC] bg-clip-text text-transparent">NL</span>
-              <span className="text-xs text-primary">.pro</span>
+              <img src="/techverse-logo.jpg" alt="TechVerseHub" className="h-10 w-auto" />
             </div>
             <p className="text-sm text-muted-foreground mb-4">
-              {settings.shop_slogan || "Best Dutch Premium Quality. Direct from the Netherlands."}
+              {settings.shop_slogan || "Premium Software & Tools. Instant Digital Delivery."}
             </p>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <MapPin className="w-4 h-4 text-primary" />
-              <span>Netherlands, EU</span>
+              <MapPin className="w-4 h-4 text-cyan-400" />
+              <span>Global Digital Marketplace</span>
             </div>
           </div>
 
@@ -176,7 +174,7 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <a href={`mailto:${settings.support_email || settings.contact_email || 'support@fromnl.pro'}`} className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
+                <a href={`mailto:${settings.support_email || settings.contact_email || 'support@techversehub.xyz'}`} className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
                   <Mail className="w-4 h-4" />
                   Email Support
                 </a>
@@ -199,7 +197,7 @@ export function Footer() {
               className="h-24 w-auto opacity-90 hover:opacity-100 transition-opacity"
             />
           </a>
-          <p className="text-sm text-muted-foreground">{settings.copyright_text || `© ${new Date().getFullYear()} FromNL.pro | All rights reserved`}</p>
+          <p className="text-sm text-muted-foreground">{settings.copyright_text || `© ${new Date().getFullYear()} TechVerseHub.xyz | All rights reserved`}</p>
         </div>
       </div>
     </footer>

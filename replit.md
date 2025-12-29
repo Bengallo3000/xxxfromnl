@@ -1,7 +1,7 @@
-# FromNL.pro - Premium Dutch Quality Shop
+# TechVerseHub.xyz - Premium Software & Tools Shop
 
 ## Overview
-FromNL.pro is a premium e-commerce platform showcasing Dutch quality products. The site features a dark-themed design with red accents and Dutch flag colors (red, white, blue).
+TechVerseHub.xyz is a premium e-commerce platform for software and digital tools. The site features a dark-themed design with cyan and purple gradient accents.
 
 ## Tech Stack
 - **Framework**: Next.js 16 with App Router
@@ -17,7 +17,7 @@ app/
   page.tsx           # Homepage with hero, Matrix effect, products
   enter/page.tsx     # Captcha entry page with Matrix effect
   admin/page.tsx     # Admin CMS panel
-  products/page.tsx  # Products listing from database
+  products/page.tsx  # Products listing from database with search
   layout.tsx         # Root layout with header/footer
   globals.css        # Global styles with dark theme
   api/
@@ -26,6 +26,8 @@ app/
     images/          # Image upload API
     products/        # Products CRUD API
     pages/           # Pages CRUD API
+    admin/login/     # Admin authentication API
+    admin/password/  # Admin password change API
 
 lib/
   db.ts              # Database connection and schema
@@ -39,8 +41,9 @@ components/
 
 public/
   uploads/           # Uploaded images storage
-  fromnl-logo.png    # Site logo
-  fromnl-wallpaper.jpg # Hero background
+  techverse-logo.jpg # Site logo
+  techverse-wallpaper.png # Branding wallpaper
+  hero-bg.png        # Hero background
 ```
 
 ## Admin Panel CMS
@@ -49,6 +52,7 @@ Access at `/admin` with password: `demo123`
 **All tabs are functional with persistent database storage:**
 - **Navigation**: Add/delete header navigation links
 - **Settings**: Shop name, slogan, contact email
+- **Security**: Change admin password (server-side authenticated)
 - **Images**: Upload images to library
 - **Products**: Create products with image upload, category selection
 - **Categories**: Create/delete categories (shown in shop filter)
@@ -64,8 +68,7 @@ Access at `/admin` with password: `demo123`
 - **Telegram Bot**: Manage orders and products via Telegram bot
 
 ## Environment Variables
-- `NEXT_PUBLIC_ADMIN_PASSWORD`: Client-side login check (default: demo123)
-- `ADMIN_PASSWORD`: Server-side API authentication
+- `ADMIN_PASSWORD`: Server-side admin password (default: demo123)
 - `DATABASE_URL`: PostgreSQL connection string
 
 ## Running the Project
@@ -73,27 +76,20 @@ Access at `/admin` with password: `demo123`
 pnpm dev  # Starts on port 5000
 ```
 
+## Features
+- **Product Search**: Search products by name, description, or category on /products page
+- **Server-side Authentication**: Admin login and password changes are verified server-side
+- **Password Change**: Admin can change password via Security tab (stored in database)
+
 ## Recent Changes
-- 2025-12-28: Added Popups management for promotional banners (Black Friday, sales, etc.)
-- 2025-12-28: Enhanced Matrix rain effect - stronger and more visible
-- 2025-12-28: Added ThePlug.u member badge to header and footer
-- 2025-12-28: Added Matrix rain effect as subtle shop background
-- 2025-12-28: Added Captcha entry page (/enter) with Matrix effect for age verification
-- 2025-12-28: Added Free Products feature with toggle in Settings and separate display section
-- 2025-12-28: Products can now be marked as "Free" (GRATIS) with separate styling
-- 2025-12-28: Added Orders management with status tracking (new, confirmed, processing, shipped, delivered, cancelled)
-- 2025-12-28: Added Payments management with transaction tracking
-- 2025-12-28: Added Telegram bot integration for managing orders/products via Telegram
-- 2025-12-28: Added Shop Themes with 5 pre-made designs (Dark Red, Ocean Blue, Forest Green, Royal Purple, Sunset Orange)
-- 2025-12-28: Enhanced hero text - larger/bolder with stronger Dutch flag colors (red/white/blue)
-- 2025-12-28: Added Categories management with shop filtering
-- 2025-12-28: Added Banners system for header/footer with various sizes for backlinks
-- 2025-12-28: Added Header/Footer customization (colors, logo, text)
-- 2025-12-28: Added Support messenger integration with floating button
-- 2025-12-28: Added Crypto wallet management for checkout payments
-- 2025-12-28: Added PostgreSQL database with CMS functionality
-- 2025-12-28: Admin panel now has working forms for all features
-- 2025-12-28: Homepage and products page now display data from database
-- 2025-12-28: Added server-side API authentication
-- 2025-12-28: Migrated from Vercel to Replit
-- 2025-12-28: Restored FromNL design with dark theme, hero section
+- 2025-12-29: Rebranded to TechVerseHub.xyz with new logo and hero images
+- 2025-12-29: Added product search functionality to /products page
+- 2025-12-29: Added Security tab for password change in admin panel
+- 2025-12-29: Implemented server-side admin authentication
+- 2025-12-29: Updated all SEO metadata and Open Graph tags
+- 2025-12-28: Added Popups management for promotional banners
+- 2025-12-28: Enhanced Matrix rain effect
+- 2025-12-28: Added Free Products feature with toggle in Settings
+- 2025-12-28: Added Orders and Payments management
+- 2025-12-28: Added Telegram bot integration
+- 2025-12-28: Added Shop Themes with 5 pre-made designs

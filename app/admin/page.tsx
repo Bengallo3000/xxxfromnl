@@ -17,6 +17,7 @@ import {
 const adminTabs = [
   { id: "navigation", name: "Navigation", icon: Navigation },
   { id: "settings", name: "Settings", icon: Settings },
+  { id: "security", name: "Security", icon: Key },
   { id: "images", name: "Images", icon: ImageIcon },
   { id: "products", name: "Products", icon: Package },
   { id: "categories", name: "Categories", icon: Tag },
@@ -91,6 +92,10 @@ export default function AdminPage() {
   const [showPopupForm, setShowPopupForm] = useState(false)
   const [popupForm, setPopupForm] = useState({ title: "", content: "", button_text: "", button_url: "", popup_type: "banner", position: "top", bg_color: "#D64545", text_color: "#ffffff" })
 
+  const [currentPassword, setCurrentPassword] = useState("")
+  const [newPassword, setNewPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+
   useEffect(() => {
     if (isAuthenticated) {
       initDatabase()
@@ -143,13 +148,26 @@ export default function AdminPage() {
     }
   }
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    const adminPass = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "demo123"
-    if (password === adminPass) {
-      setAdminToken(password)
-      setIsAuthenticated(true)
+    setLoading(true)
+    try {
+      const response = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password })
+      })
+      const data = await response.json()
+      if (response.ok && data.success) {
+        setAdminToken(data.password || password)
+        setIsAuthenticated(true)
+      } else {
+        showMessage(data.error || 'Invalid password')
+      }
+    } catch (error) {
+      showMessage('Login failed')
     }
+    setLoading(false)
   }
 
   const showMessage = (msg: string) => {
@@ -554,6 +572,38 @@ export default function AdminPage() {
     }
   }
 
+  const changePassword = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (newPassword !== confirmPassword) {
+      showMessage("Passwords do not match!")
+      return
+    }
+    if (newPassword.length < 6) {
+      showMessage("Password must be at least 6 characters!")
+      return
+    }
+    setLoading(true)
+    try {
+      const response = await fetch('/api/admin/password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-admin-token': adminToken },
+        body: JSON.stringify({ currentPassword, newPassword })
+      })
+      const data = await response.json()
+      if (response.ok) {
+        setCurrentPassword("")
+        setNewPassword("")
+        setConfirmPassword("")
+        showMessage("Password changed successfully!")
+      } else {
+        showMessage(data.error || "Error changing password")
+      }
+    } catch (error) {
+      showMessage("Error changing password")
+    }
+    setLoading(false)
+  }
+
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center py-20 bg-background">
@@ -573,7 +623,8 @@ export default function AdminPage() {
               placeholder="Enter admin password"
               className="bg-input"
             />
-            <Button type="submit" className="w-full bg-primary hover:bg-primary/90">
+            <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={loading}>
+              {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
               Access Dashboard
             </Button>
           </form>
@@ -1056,6 +1107,64 @@ export default function AdminPage() {
                     </div>
                   ))
                 )}
+              </div>
+            </div>
+          )}
+
+          {activeTab === "security" && (
+            <div>
+              <h2 className="text-xl font-bold mb-6">Security Settings</h2>
+              <div className="max-w-xl">
+                <div className="p-4 bg-secondary/50 rounded-lg border border-border mb-6">
+                  <h3 className="font-medium mb-4 flex items-center gap-2">
+                    <Key className="w-4 h-4 text-primary" />
+                    Change Admin Password
+                  </h3>
+                  <form onSubmit={changePassword} className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Current Password</label>
+                      <Input 
+                        type="password" 
+                        value={currentPassword} 
+                        onChange={(e) => setCurrentPassword(e.target.value)} 
+                        placeholder="Enter current password" 
+                        className="bg-input" 
+                        required 
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2">New Password</label>
+                      <Input 
+                        type="password" 
+                        value={newPassword} 
+                        onChange={(e) => setNewPassword(e.target.value)} 
+                        placeholder="Enter new password (min 6 characters)" 
+                        className="bg-input" 
+                        required 
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Confirm New Password</label>
+                      <Input 
+                        type="password" 
+                        value={confirmPassword} 
+                        onChange={(e) => setConfirmPassword(e.target.value)} 
+                        placeholder="Confirm new password" 
+                        className="bg-input" 
+                        required 
+                      />
+                    </div>
+                    <Button type="submit" className="bg-primary hover:bg-primary/90" disabled={loading}>
+                      {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                      Change Password
+                    </Button>
+                  </form>
+                </div>
+                <div className="p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
+                  <p className="text-sm text-yellow-400">
+                    Note: After changing the password, you will need to use the new password to log in. Make sure to remember your new password!
+                  </p>
+                </div>
               </div>
             </div>
           )}

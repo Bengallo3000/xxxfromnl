@@ -88,6 +88,10 @@ app/
 ```
 
 ## Recent Changes
+- 2025-12-30: Added shopping cart with sidebar, checkout page with crypto payments
+- 2025-12-30: Fixed crypto API to show all wallets (including inactive) in admin
+- 2025-12-30: Added PUT endpoints for navigation, categories, banners (full edit support)
+- 2025-12-30: Fixed Telegram bot security - rejects unauthorized chats
 - 2025-12-30: Fixed Pages - now saves to database with products, auto-add to navigation option
 - 2025-12-30: Added dynamic page routes at /page/[slug]
 - 2025-12-30: Added Telegram Admin Chat/Group IDs field in Telegram Bot settings

@@ -123,7 +123,7 @@ export default function AdminPage() {
         fetch('/api/categories'),
         fetch('/api/banners'),
         fetch('/api/settings'),
-        fetch('/api/crypto'),
+        fetch('/api/crypto', { headers: authHeaders }),
         fetch('/api/orders', { headers: authHeaders }),
         fetch('/api/payments', { headers: authHeaders }),
         fetch('/api/themes'),

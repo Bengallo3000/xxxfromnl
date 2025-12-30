@@ -6,6 +6,7 @@ import { Shield, Truck, Star, Check, Tag, Package, ShoppingCart, Gift } from "lu
 import { Button } from "@/components/ui/button"
 import { useState, useEffect } from "react"
 import { MatrixEffect } from "@/components/matrix-effect"
+import { useCart } from "@/components/cart-provider"
 
 interface Product {
   id: number
@@ -28,6 +29,7 @@ export default function HomePage() {
   const [categories, setCategories] = useState<Category[]>([])
   const [selectedCategory, setSelectedCategory] = useState("Alle")
   const [freeProductsEnabled, setFreeProductsEnabled] = useState(false)
+  const { addItem } = useCart()
 
   useEffect(() => {
     fetchData()
@@ -55,6 +57,17 @@ export default function HomePage() {
     } catch (error) {
       console.log('No data loaded')
     }
+  }
+
+  const handleAddToCart = (product: Product) => {
+    addItem({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image_url: product.image_url,
+      category: product.category,
+      is_free: product.is_free
+    })
   }
 
   const freeProducts = products.filter(p => p.is_free === true)
@@ -298,7 +311,11 @@ export default function HomePage() {
                       <span className="text-lg font-bold text-primary">
                         EUR {Number(product.price).toFixed(2)}
                       </span>
-                      <Button size="sm" className="bg-primary hover:bg-primary/90 gap-1">
+                      <Button 
+                        size="sm" 
+                        className="bg-primary hover:bg-primary/90 gap-1"
+                        onClick={() => handleAddToCart(product)}
+                      >
                         <ShoppingCart className="w-4 h-4" />
                         Add
                       </Button>
@@ -366,7 +383,11 @@ export default function HomePage() {
                       <span className="text-lg font-bold text-green-500">
                         GRATIS
                       </span>
-                      <Button size="sm" className="bg-green-600 hover:bg-green-500 text-black gap-1">
+                      <Button 
+                        size="sm" 
+                        className="bg-green-600 hover:bg-green-500 text-black gap-1"
+                        onClick={() => handleAddToCart(product)}
+                      >
                         <Gift className="w-4 h-4" />
                         Get Free
                       </Button>

@@ -7,6 +7,8 @@ import { Footer } from "@/components/footer"
 import { SupportButton } from "@/components/support-button"
 import { ShopThemeProvider } from "@/components/shop-theme-provider"
 import { ShopPopup } from "@/components/shop-popup"
+import { CartProvider } from "@/components/cart-provider"
+import { CartSidebar } from "@/components/cart-sidebar"
 import { Toaster } from "@/components/ui/sonner"
 import "./globals.css"
 
@@ -57,15 +59,18 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="font-sans antialiased">
-        <ShopThemeProvider>
-          <ShopPopup />
-          <Header />
-          <main>{children}</main>
-          <Footer />
-          <SupportButton />
-          <Toaster />
-          <Analytics />
-        </ShopThemeProvider>
+        <CartProvider>
+          <ShopThemeProvider>
+            <ShopPopup />
+            <Header />
+            <main>{children}</main>
+            <Footer />
+            <SupportButton />
+            <CartSidebar />
+            <Toaster />
+            <Analytics />
+          </ShopThemeProvider>
+        </CartProvider>
       </body>
     </html>
   )

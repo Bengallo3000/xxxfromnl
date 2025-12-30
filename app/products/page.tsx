@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import { Package, ShoppingCart } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useCart } from "@/components/cart-provider"
 
 interface Product {
   id: number
@@ -13,6 +14,7 @@ interface Product {
   image_url: string
   category: string
   in_stock: boolean
+  is_free?: boolean
 }
 
 function ProductsContent() {
@@ -21,6 +23,7 @@ function ProductsContent() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const searchParams = useSearchParams()
   const searchQuery = searchParams.get('search') || ""
+  const { addItem } = useCart()
 
   useEffect(() => {
     fetchProducts()
@@ -37,6 +40,17 @@ function ProductsContent() {
       console.error('Error loading products:', error)
     }
     setLoading(false)
+  }
+
+  const handleAddToCart = (product: Product) => {
+    addItem({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image_url: product.image_url,
+      category: product.category,
+      is_free: product.is_free
+    })
   }
 
   const categories = [...new Set(products.map(p => p.category).filter(Boolean))]
@@ -139,10 +153,14 @@ function ProductsContent() {
                     </p>
                   )}
                   <div className="flex items-center justify-between">
-                    <span className="text-lg font-bold text-primary">
-                      EUR {Number(product.price).toFixed(2)}
+                    <span className={`text-lg font-bold ${product.is_free ? 'text-green-500' : 'text-primary'}`}>
+                      {product.is_free ? 'FREE' : `EUR ${Number(product.price).toFixed(2)}`}
                     </span>
-                    <Button size="sm" className="bg-primary hover:bg-primary/90 gap-1">
+                    <Button 
+                      size="sm" 
+                      className="bg-primary hover:bg-primary/90 gap-1"
+                      onClick={() => handleAddToCart(product)}
+                    >
                       <ShoppingCart className="w-4 h-4" />
                       Add
                     </Button>

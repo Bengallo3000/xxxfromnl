@@ -22,7 +22,9 @@ export const metadata: Metadata = {
   authors: [{ name: "TechVerseHub.xyz" }],
   creator: "TechVerseHub.xyz",
   icons: {
-    icon: "/favicon.ico",
+    icon: "/techverse-logo.jpg",
+    shortcut: "/techverse-logo.jpg",
+    apple: "/techverse-logo.jpg",
   },
   openGraph: {
     type: "website",

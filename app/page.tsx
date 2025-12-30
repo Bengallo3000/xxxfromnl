@@ -104,7 +104,7 @@ export default function HomePage() {
             <p className="text-sm text-cyan-400">★ Premium Software & Tools</p>
           </div>
           
-          <h1 className="text-6xl sm:text-8xl md:text-[10rem] lg:text-[12rem] font-black mb-4 tracking-tight leading-none relative">
+          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black mb-4 tracking-tight leading-none relative">
               <span 
                 className="bg-gradient-to-r from-cyan-400 via-cyan-300 to-purple-500 bg-clip-text text-transparent block"
                 style={{

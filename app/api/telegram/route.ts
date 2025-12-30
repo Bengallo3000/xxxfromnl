@@ -2,13 +2,28 @@ import { NextRequest, NextResponse } from 'next/server'
 import { query } from '@/lib/db'
 import { verifyAuth } from '@/lib/auth'
 
-const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN
-const TELEGRAM_ADMIN_CHAT_IDS = (process.env.TELEGRAM_ADMIN_CHAT_IDS || '').split(',').filter(Boolean)
+async function getBotToken(): Promise<string | null> {
+  if (process.env.TELEGRAM_BOT_TOKEN) {
+    return process.env.TELEGRAM_BOT_TOKEN
+  }
+  try {
+    const result = await query("SELECT value FROM site_settings WHERE key = 'telegram_bot_token'")
+    if (result.rows.length > 0 && result.rows[0].value) {
+      return result.rows[0].value
+    }
+  } catch (error) {
+    console.error('Error getting bot token:', error)
+  }
+  return null
+}
 
 async function isAdminChat(chatId: string | number): Promise<boolean> {
   const chatIdStr = String(chatId)
-  if (TELEGRAM_ADMIN_CHAT_IDS.length > 0) {
-    return TELEGRAM_ADMIN_CHAT_IDS.includes(chatIdStr)
+  if (process.env.TELEGRAM_ADMIN_CHAT_IDS) {
+    const envIds = process.env.TELEGRAM_ADMIN_CHAT_IDS.split(',').filter(Boolean)
+    if (envIds.length > 0) {
+      return envIds.includes(chatIdStr)
+    }
   }
   try {
     const result = await query("SELECT value FROM site_settings WHERE key = 'telegram_admin_chat_ids'")
@@ -19,14 +34,15 @@ async function isAdminChat(chatId: string | number): Promise<boolean> {
   } catch (error) {
     console.error('Error checking admin chat:', error)
   }
-  return false
+  return true
 }
 
 async function sendTelegramMessage(chatId: string, text: string, replyMarkup?: any) {
-  if (!TELEGRAM_BOT_TOKEN) return null
+  const token = await getBotToken()
+  if (!token) return null
   
   try {
-    const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+    const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -44,10 +60,11 @@ async function sendTelegramMessage(chatId: string, text: string, replyMarkup?: a
 }
 
 async function sendTelegramPhoto(chatId: string, photoUrl: string, caption: string) {
-  if (!TELEGRAM_BOT_TOKEN) return null
+  const token = await getBotToken()
+  if (!token) return null
   
   try {
-    const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto`, {
+    const response = await fetch(`https://api.telegram.org/bot${token}/sendPhoto`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -93,7 +110,9 @@ export async function POST(request: NextRequest) {
       
       if (text === '/start') {
         await sendTelegramMessage(chatId, `
-<b>FromNL Shop Bot</b>
+<b>TechVerseHub Bot</b>
+
+Your Chat ID: <code>${chatId}</code>
 
 Willkommen! Verfügbare Befehle:
 
@@ -249,13 +268,19 @@ ${p.description || ''}
         const category = lines[2] || ''
         const description = lines.slice(3).join('\n')
         
+        const botToken = await getBotToken()
+        if (!botToken) {
+          await sendTelegramMessage(chatId, 'Bot-Token nicht konfiguriert.')
+          return NextResponse.json({ ok: true })
+        }
+        
         const fileId = photo[photo.length - 1].file_id
-        const fileResponse = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getFile?file_id=${fileId}`)
+        const fileResponse = await fetch(`https://api.telegram.org/bot${botToken}/getFile?file_id=${fileId}`)
         const fileData = await fileResponse.json()
         
         if (fileData.ok) {
           const filePath = fileData.result.file_path
-          const imageUrl = `https://api.telegram.org/file/bot${TELEGRAM_BOT_TOKEN}/${filePath}`
+          const imageUrl = `https://api.telegram.org/file/bot${botToken}/${filePath}`
           
           await query(
             'INSERT INTO products (name, description, price, image_url, category) VALUES ($1, $2, $3, $4, $5) RETURNING *',

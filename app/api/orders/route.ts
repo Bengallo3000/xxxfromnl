@@ -4,7 +4,7 @@ import { verifyAuth } from '@/lib/auth'
 
 export async function GET(request: NextRequest) {
   if (!verifyAuth(request)) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    return NextResponse.json([])
   }
   try {
     const result = await query('SELECT * FROM orders ORDER BY created_at DESC')

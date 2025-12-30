@@ -2,8 +2,12 @@ import { NextRequest, NextResponse } from 'next/server'
 import { query } from '@/lib/db'
 import { verifyAuth } from '@/lib/auth'
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    if (verifyAuth(request)) {
+      const result = await query('SELECT * FROM crypto_wallets ORDER BY sort_order ASC')
+      return NextResponse.json(result.rows)
+    }
     const result = await query('SELECT * FROM crypto_wallets WHERE is_active = true ORDER BY sort_order ASC')
     return NextResponse.json(result.rows)
   } catch (error) {
@@ -32,11 +36,15 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
   try {
-    const { id, is_active, wallet_address } = await request.json()
-    if (wallet_address !== undefined) {
+    const { id, is_active, wallet_address, currency } = await request.json()
+    
+    if (currency !== undefined && wallet_address !== undefined) {
+      await query('UPDATE crypto_wallets SET currency = $1, wallet_address = $2, is_active = $3 WHERE id = $4', 
+        [currency, wallet_address, is_active !== undefined ? is_active : true, id])
+    } else if (wallet_address !== undefined) {
       await query('UPDATE crypto_wallets SET wallet_address = $1 WHERE id = $2', [wallet_address, id])
     }
-    if (is_active !== undefined) {
+    if (is_active !== undefined && wallet_address === undefined) {
       await query('UPDATE crypto_wallets SET is_active = $1 WHERE id = $2', [is_active, id])
     }
     return NextResponse.json({ success: true })

@@ -28,13 +28,15 @@ async function isAdminChat(chatId: string | number): Promise<boolean> {
   try {
     const result = await query("SELECT value FROM site_settings WHERE key = 'telegram_admin_chat_ids'")
     if (result.rows.length > 0 && result.rows[0].value) {
-      const adminIds = result.rows[0].value.split(',').map((id: string) => id.trim())
-      return adminIds.includes(chatIdStr)
+      const adminIds = result.rows[0].value.split(',').map((id: string) => id.trim()).filter(Boolean)
+      if (adminIds.length > 0) {
+        return adminIds.includes(chatIdStr)
+      }
     }
   } catch (error) {
     console.error('Error checking admin chat:', error)
   }
-  return true
+  return false
 }
 
 async function sendTelegramMessage(chatId: string, text: string, replyMarkup?: any) {

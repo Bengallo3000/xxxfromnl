@@ -22,6 +22,7 @@ export async function POST(request: NextRequest) {
     const price = parseFloat(formData.get('price') as string) || 0;
     const category = formData.get('category') as string || '';
     const is_free = formData.get('is_free') === 'true';
+    const in_stock = formData.get('in_stock') !== 'false';
     const file = formData.get('image') as File | null;
 
     let imageUrl = '';
@@ -39,8 +40,8 @@ export async function POST(request: NextRequest) {
     }
 
     const result = await query(
-      'INSERT INTO products (name, description, price, image_url, category, is_free) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-      [name, description, is_free ? 0 : price, imageUrl, category, is_free]
+      'INSERT INTO products (name, description, price, image_url, category, is_free, in_stock) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+      [name, description, is_free ? 0 : price, imageUrl, category, is_free, in_stock]
     );
 
     return NextResponse.json(result.rows[0]);
@@ -59,6 +60,8 @@ export async function PUT(request: NextRequest) {
     const description = formData.get('description') as string || '';
     const price = parseFloat(formData.get('price') as string);
     const category = formData.get('category') as string || '';
+    const is_free = formData.get('is_free') === 'true';
+    const in_stock = formData.get('in_stock') !== 'false';
     const file = formData.get('image') as File | null;
 
     let imageUrl = formData.get('existing_image_url') as string || '';
@@ -77,8 +80,8 @@ export async function PUT(request: NextRequest) {
     }
 
     const result = await query(
-      'UPDATE products SET name = $1, description = $2, price = $3, image_url = $4, category = $5, updated_at = CURRENT_TIMESTAMP WHERE id = $6 RETURNING *',
-      [name, description, price, imageUrl, category, id]
+      'UPDATE products SET name = $1, description = $2, price = $3, image_url = $4, category = $5, is_free = $6, in_stock = $7, updated_at = CURRENT_TIMESTAMP WHERE id = $8 RETURNING *',
+      [name, description, is_free ? 0 : price, imageUrl, category, is_free, in_stock, id]
     );
 
     return NextResponse.json(result.rows[0]);

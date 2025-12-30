@@ -27,6 +27,22 @@ export async function POST(request: NextRequest) {
   }
 }
 
+export async function PUT(request: NextRequest) {
+  if (!verifyAuth(request)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+  try {
+    const { id, name, slug, image_url, sort_order } = await request.json()
+    const result = await query(
+      'UPDATE categories SET name = $1, slug = $2, image_url = $3, sort_order = $4 WHERE id = $5 RETURNING *',
+      [name, slug || name.toLowerCase().replace(/\s+/g, '-'), image_url, sort_order || 0, id]
+    )
+    return NextResponse.json(result.rows[0])
+  } catch (error) {
+    return NextResponse.json({ error: 'Failed to update category' }, { status: 500 })
+  }
+}
+
 export async function DELETE(request: NextRequest) {
   if (!verifyAuth(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

@@ -69,6 +69,7 @@ export default function AdminPage() {
   const [pages, setPages] = useState<Page[]>([])
   const [showPageForm, setShowPageForm] = useState(false)
   const [pageForm, setPageForm] = useState({ slug: "", title: "", content: "", product_ids: [] as number[], addToNav: true })
+  const [editingPageId, setEditingPageId] = useState<number | null>(null)
 
   const [categories, setCategories] = useState<Category[]>([])
   const [showCategoryForm, setShowCategoryForm] = useState(false)
@@ -344,6 +345,45 @@ export default function AdminPage() {
     } catch (error) {
       showMessage("Error deleting page")
     }
+  }
+
+  const startEditPage = (page: Page) => {
+    setEditingPageId(page.id)
+    setPageForm({
+      slug: page.slug,
+      title: page.title,
+      content: page.content || "",
+      product_ids: page.product_ids || [],
+      addToNav: false
+    })
+    setShowPageForm(true)
+  }
+
+  const updatePage = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!editingPageId) return
+    setLoading(true)
+    try {
+      await fetch('/api/pages', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'x-admin-token': adminToken },
+        body: JSON.stringify({ id: editingPageId, ...pageForm })
+      })
+      setPageForm({ slug: "", title: "", content: "", product_ids: [], addToNav: true })
+      setEditingPageId(null)
+      setShowPageForm(false)
+      loadData()
+      showMessage("Page updated!")
+    } catch (error) {
+      showMessage("Error updating page")
+    }
+    setLoading(false)
+  }
+
+  const cancelEditPage = () => {
+    setEditingPageId(null)
+    setPageForm({ slug: "", title: "", content: "", product_ids: [], addToNav: true })
+    setShowPageForm(false)
   }
 
   const addCategory = async (e: React.FormEvent) => {
@@ -922,13 +962,21 @@ export default function AdminPage() {
             <div>
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold">Pages</h2>
-                <Button className="bg-primary hover:bg-primary/90 gap-2" onClick={() => setShowPageForm(!showPageForm)}>
+                <Button className="bg-primary hover:bg-primary/90 gap-2" onClick={() => { setEditingPageId(null); setPageForm({ slug: "", title: "", content: "", product_ids: [], addToNav: true }); setShowPageForm(!showPageForm) }}>
                   {showPageForm ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
                   {showPageForm ? "Cancel" : "New Page"}
                 </Button>
               </div>
               {showPageForm && (
-                <form onSubmit={addPage} className="mb-6 p-4 bg-secondary/50 rounded-lg border border-border">
+                <form onSubmit={editingPageId ? updatePage : addPage} className="mb-6 p-4 bg-secondary/50 rounded-lg border border-border">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="font-medium">{editingPageId ? "Edit Page" : "Create New Page"}</h3>
+                    {editingPageId && (
+                      <Button type="button" variant="ghost" size="sm" onClick={cancelEditPage}>
+                        <X className="w-4 h-4 mr-1" /> Cancel Edit
+                      </Button>
+                    )}
+                  </div>
                   <div className="grid gap-4 md:grid-cols-2">
                     <div>
                       <label className="block text-sm font-medium mb-2">Page Title</label>
@@ -983,10 +1031,17 @@ export default function AdminPage() {
                     </label>
                     <p className="text-xs text-muted-foreground mt-1">Automatically add a link to this page in the header menu.</p>
                   </div>
-                  <Button type="submit" className="mt-4 bg-primary hover:bg-primary/90" disabled={loading}>
-                    {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                    Create Page
-                  </Button>
+                  <div className="flex gap-2 mt-4">
+                    <Button type="submit" className="bg-primary hover:bg-primary/90" disabled={loading}>
+                      {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                      {editingPageId ? "Update Page" : "Create Page"}
+                    </Button>
+                    {editingPageId && (
+                      <Button type="button" variant="outline" onClick={cancelEditPage}>
+                        Cancel
+                      </Button>
+                    )}
+                  </div>
                 </form>
               )}
               <div className="space-y-3">
@@ -995,14 +1050,20 @@ export default function AdminPage() {
                 ) : (
                   pages.map((page) => (
                     <div key={page.id} className="flex items-center justify-between p-4 bg-secondary/50 rounded-lg border border-border">
-                      <div>
+                      <div className="flex-1">
                         <div className="font-medium">{page.title}</div>
                         <div className="text-sm text-muted-foreground">/page/{page.slug}</div>
                         {page.product_ids && page.product_ids.length > 0 && (
                           <div className="text-xs text-primary mt-1">{page.product_ids.length} product(s) attached</div>
                         )}
+                        {page.content && (
+                          <div className="text-xs text-muted-foreground mt-1 line-clamp-1">{page.content.substring(0, 100)}...</div>
+                        )}
                       </div>
                       <div className="flex items-center gap-2">
+                        <Button variant="outline" size="sm" className="text-xs" onClick={() => startEditPage(page)}>
+                          <Pencil className="w-3 h-3 mr-1" /> Edit
+                        </Button>
                         {!navItems.some(nav => nav.href === `/page/${page.slug}`) && (
                           <Button variant="outline" size="sm" className="text-xs" onClick={() => addPageToNav(page)}>
                             <Plus className="w-3 h-3 mr-1" /> Add to Nav

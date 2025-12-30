@@ -30,8 +30,6 @@ interface SiteSettings {
 
 const defaultNavigation = [
   { label: "Home", href: "/" },
-  { label: "Products", href: "/products" },
-  { label: "Contact", href: "#contact" },
 ]
 
 export function Header() {

@@ -7,7 +7,7 @@ export async function GET() {
     const result = await query('SELECT * FROM navigation ORDER BY sort_order ASC');
     return NextResponse.json(result.rows);
   } catch (error) {
-    return NextResponse.json({ error: String(error) }, { status: 500 });
+    return NextResponse.json([]);
   }
 }
 

@@ -9,7 +9,7 @@ export async function GET() {
     const result = await query('SELECT * FROM products ORDER BY created_at DESC');
     return NextResponse.json(result.rows);
   } catch (error) {
-    return NextResponse.json({ error: String(error) }, { status: 500 });
+    return NextResponse.json([]);
   }
 }
 

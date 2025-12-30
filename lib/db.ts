@@ -21,6 +21,7 @@ export async function initDb() {
         slug VARCHAR(255) UNIQUE NOT NULL,
         title VARCHAR(255) NOT NULL,
         content TEXT,
+        product_ids JSONB DEFAULT '[]',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
@@ -163,6 +164,14 @@ export async function initDb() {
         end_date TIMESTAMP,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
+
+      -- Migration: Add product_ids column to pages table if it doesn't exist
+      DO $$ 
+      BEGIN 
+        IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'pages' AND column_name = 'product_ids') THEN
+          ALTER TABLE pages ADD COLUMN product_ids JSONB DEFAULT '[]';
+        END IF;
+      END $$;
     `);
   } finally {
     client.release();

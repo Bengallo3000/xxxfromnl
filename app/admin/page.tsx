@@ -36,7 +36,7 @@ const adminTabs = [
 interface NavItem { id: number; label: string; href: string; sort_order: number }
 interface ImageItem { id: number; name: string; url: string; alt_text: string }
 interface Product { id: number; name: string; description: string; price: number; image_url: string; category: string; in_stock: boolean; is_free: boolean }
-interface Page { id: number; slug: string; title: string; content: string }
+interface Page { id: number; slug: string; title: string; content: string; product_ids: number[] }
 interface Category { id: number; name: string; slug: string; image_url: string }
 interface Banner { id: number; name: string; image_url: string; link_url: string; position: string; size: string; is_active: boolean }
 interface CryptoWallet { id: number; currency: string; wallet_address: string; is_active: boolean }
@@ -68,7 +68,7 @@ export default function AdminPage() {
 
   const [pages, setPages] = useState<Page[]>([])
   const [showPageForm, setShowPageForm] = useState(false)
-  const [pageForm, setPageForm] = useState({ slug: "", title: "", content: "" })
+  const [pageForm, setPageForm] = useState({ slug: "", title: "", content: "", product_ids: [] as number[] })
 
   const [categories, setCategories] = useState<Category[]>([])
   const [showCategoryForm, setShowCategoryForm] = useState(false)
@@ -300,7 +300,7 @@ export default function AdminPage() {
         headers: { 'Content-Type': 'application/json', 'x-admin-token': adminToken },
         body: JSON.stringify(pageForm)
       })
-      setPageForm({ slug: "", title: "", content: "" })
+      setPageForm({ slug: "", title: "", content: "", product_ids: [] })
       setShowPageForm(false)
       loadData()
       showMessage("Page created!")
@@ -922,6 +922,34 @@ export default function AdminPage() {
                     <label className="block text-sm font-medium mb-2">Content</label>
                     <Textarea value={pageForm.content} onChange={(e) => setPageForm({...pageForm, content: e.target.value})} placeholder="Page content..." className="bg-input" rows={6} />
                   </div>
+                  <div className="mt-4">
+                    <label className="block text-sm font-medium mb-2">Products on this Page</label>
+                    <div className="max-h-48 overflow-y-auto bg-input rounded-md border border-border p-2 space-y-2">
+                      {products.length === 0 ? (
+                        <div className="text-sm text-muted-foreground p-2">No products available. Create products first.</div>
+                      ) : (
+                        products.map((product) => (
+                          <label key={product.id} className="flex items-center gap-2 p-2 hover:bg-secondary/50 rounded cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={pageForm.product_ids.includes(product.id)}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setPageForm({...pageForm, product_ids: [...pageForm.product_ids, product.id]})
+                                } else {
+                                  setPageForm({...pageForm, product_ids: pageForm.product_ids.filter(id => id !== product.id)})
+                                }
+                              }}
+                              className="w-4 h-4 rounded border-border"
+                            />
+                            <span className="text-sm">{product.name}</span>
+                            <span className="text-xs text-muted-foreground ml-auto">${product.price}</span>
+                          </label>
+                        ))
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">Select products to display on this page.</p>
+                  </div>
                   <Button type="submit" className="mt-4 bg-primary hover:bg-primary/90" disabled={loading}>
                     {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
                     Create Page
@@ -929,17 +957,24 @@ export default function AdminPage() {
                 </form>
               )}
               <div className="space-y-3">
-                {pages.map((page) => (
-                  <div key={page.id} className="flex items-center justify-between p-4 bg-secondary/50 rounded-lg border border-border">
-                    <div>
-                      <div className="font-medium">{page.title}</div>
-                      <div className="text-sm text-muted-foreground">/{page.slug}</div>
+                {pages.length === 0 ? (
+                  <div className="text-center py-12 text-muted-foreground">No pages yet. Create custom pages for your shop.</div>
+                ) : (
+                  pages.map((page) => (
+                    <div key={page.id} className="flex items-center justify-between p-4 bg-secondary/50 rounded-lg border border-border">
+                      <div>
+                        <div className="font-medium">{page.title}</div>
+                        <div className="text-sm text-muted-foreground">/{page.slug}</div>
+                        {page.product_ids && page.product_ids.length > 0 && (
+                          <div className="text-xs text-primary mt-1">{page.product_ids.length} product(s) attached</div>
+                        )}
+                      </div>
+                      <Button variant="ghost" size="icon" className="hover:bg-primary/20 text-primary" onClick={() => deletePage(page.id)}>
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
                     </div>
-                    <Button variant="ghost" size="icon" className="hover:bg-primary/20 text-primary" onClick={() => deletePage(page.id)}>
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </div>
           )}
@@ -1544,6 +1579,16 @@ Product description here...`}
                       type="password"
                     />
                     <p className="text-xs text-muted-foreground mt-1">This is stored securely and used for bot authentication.</p>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Admin Chat/Group IDs</label>
+                    <Input 
+                      value={siteSettings.telegram_admin_chat_ids || ""} 
+                      onChange={(e) => setSiteSettings({...siteSettings, telegram_admin_chat_ids: e.target.value})} 
+                      placeholder="e.g. 123456789, -1001234567890"
+                      className="bg-input font-mono text-sm"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">Comma-separated list of Telegram user or group IDs that can use admin commands. Use /start to get your chat ID.</p>
                   </div>
                   <Button type="submit" className="bg-primary hover:bg-primary/90" disabled={loading}>
                     {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}

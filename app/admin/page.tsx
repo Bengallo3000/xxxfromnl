@@ -68,7 +68,7 @@ export default function AdminPage() {
 
   const [pages, setPages] = useState<Page[]>([])
   const [showPageForm, setShowPageForm] = useState(false)
-  const [pageForm, setPageForm] = useState({ slug: "", title: "", content: "", product_ids: [] as number[] })
+  const [pageForm, setPageForm] = useState({ slug: "", title: "", content: "", product_ids: [] as number[], addToNav: true })
 
   const [categories, setCategories] = useState<Category[]>([])
   const [showCategoryForm, setShowCategoryForm] = useState(false)
@@ -300,7 +300,14 @@ export default function AdminPage() {
         headers: { 'Content-Type': 'application/json', 'x-admin-token': adminToken },
         body: JSON.stringify(pageForm)
       })
-      setPageForm({ slug: "", title: "", content: "", product_ids: [] })
+      if (pageForm.addToNav) {
+        await fetch('/api/navigation', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-admin-token': adminToken },
+          body: JSON.stringify({ label: pageForm.title, href: `/page/${pageForm.slug}`, sort_order: navItems.length })
+        })
+      }
+      setPageForm({ slug: "", title: "", content: "", product_ids: [], addToNav: true })
       setShowPageForm(false)
       loadData()
       showMessage("Page created!")
@@ -308,6 +315,20 @@ export default function AdminPage() {
       showMessage("Error creating page")
     }
     setLoading(false)
+  }
+
+  const addPageToNav = async (page: Page) => {
+    try {
+      await fetch('/api/navigation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-admin-token': adminToken },
+        body: JSON.stringify({ label: page.title, href: `/page/${page.slug}`, sort_order: navItems.length })
+      })
+      loadData()
+      showMessage("Page added to navigation!")
+    } catch (error) {
+      showMessage("Error adding to navigation")
+    }
   }
 
   const deletePage = async (id: number) => {
@@ -950,6 +971,18 @@ export default function AdminPage() {
                     </div>
                     <p className="text-xs text-muted-foreground mt-1">Select products to display on this page.</p>
                   </div>
+                  <div className="mt-4">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={pageForm.addToNav}
+                        onChange={(e) => setPageForm({...pageForm, addToNav: e.target.checked})}
+                        className="w-4 h-4 rounded border-border"
+                      />
+                      <span className="text-sm">Add to Header Navigation</span>
+                    </label>
+                    <p className="text-xs text-muted-foreground mt-1">Automatically add a link to this page in the header menu.</p>
+                  </div>
                   <Button type="submit" className="mt-4 bg-primary hover:bg-primary/90" disabled={loading}>
                     {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
                     Create Page
@@ -964,14 +997,21 @@ export default function AdminPage() {
                     <div key={page.id} className="flex items-center justify-between p-4 bg-secondary/50 rounded-lg border border-border">
                       <div>
                         <div className="font-medium">{page.title}</div>
-                        <div className="text-sm text-muted-foreground">/{page.slug}</div>
+                        <div className="text-sm text-muted-foreground">/page/{page.slug}</div>
                         {page.product_ids && page.product_ids.length > 0 && (
                           <div className="text-xs text-primary mt-1">{page.product_ids.length} product(s) attached</div>
                         )}
                       </div>
-                      <Button variant="ghost" size="icon" className="hover:bg-primary/20 text-primary" onClick={() => deletePage(page.id)}>
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+                      <div className="flex items-center gap-2">
+                        {!navItems.some(nav => nav.href === `/page/${page.slug}`) && (
+                          <Button variant="outline" size="sm" className="text-xs" onClick={() => addPageToNav(page)}>
+                            <Plus className="w-3 h-3 mr-1" /> Add to Nav
+                          </Button>
+                        )}
+                        <Button variant="ghost" size="icon" className="hover:bg-primary/20 text-primary" onClick={() => deletePage(page.id)}>
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
                     </div>
                   ))
                 )}

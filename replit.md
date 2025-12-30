@@ -56,7 +56,7 @@ Access at `/admin` with password: `demo123`
 - **Images**: Upload images to library
 - **Products**: Create products with image upload, category selection
 - **Categories**: Create/delete categories (shown in shop filter)
-- **Pages**: Create custom pages with content
+- **Pages**: Create custom pages with content, attach products, auto-add to navigation
 - **Banners**: Add banners to header/footer for backlinks (various sizes)
 - **Popups**: Create promotional popups (Black Friday, sales) - banner, modal, floating, slide types
 - **Header/Footer**: Customize colors, logo, footer text, copyright
@@ -65,7 +65,7 @@ Access at `/admin` with password: `demo123`
 - **Orders**: View and manage customer orders with status updates
 - **Payments**: Track and manage payment transactions
 - **Themes**: Choose from 5 pre-designed shop themes
-- **Telegram Bot**: Manage orders and products via Telegram bot
+- **Telegram Bot**: Manage orders and products via Telegram bot (requires bot token + admin chat IDs)
 
 ## Environment Variables
 - `ADMIN_PASSWORD`: Server-side admin password (default: demo123)
@@ -81,7 +81,18 @@ pnpm dev  # Starts on port 5000
 - **Server-side Authentication**: Admin login and password changes are verified server-side
 - **Password Change**: Admin can change password via Security tab (stored in database)
 
+## Project Structure
+```
+app/
+  page/[slug]/page.tsx  # Dynamic pages from database
+```
+
 ## Recent Changes
+- 2025-12-30: Fixed Pages - now saves to database with products, auto-add to navigation option
+- 2025-12-30: Added dynamic page routes at /page/[slug]
+- 2025-12-30: Added Telegram Admin Chat/Group IDs field in Telegram Bot settings
+- 2025-12-30: Updated favicon to TechVerseHub logo
+- 2025-12-30: Removed Products/Contact from default header nav
 - 2025-12-29: Rebranded to TechVerseHub.xyz with new logo and hero images
 - 2025-12-29: Added product search functionality to /products page
 - 2025-12-29: Added Security tab for password change in admin panel
